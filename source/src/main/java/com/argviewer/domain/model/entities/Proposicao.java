@@ -1,41 +1,58 @@
 package com.argviewer.domain.model.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
-public record Proposicao(
-        int id,
-        String texto,
-        String fonte,
-        Date dataCriacao,
-        Date DataAlteracao,
-        int qtdUpvotes,
-        int qtdDownvotes,
-        int relevancia,
-        int veracidade,
-        int idUsuario) {
+@Entity
+@Getter
+@Setter
+public class Proposicao {
 
-    public Proposicao(
-            String texto,
-            String fonte,
-            Date dataCriacao,
-            Date DataAlteracao,
-            int qtdUpvotes,
-            int qtdDownvotes,
-            int relevancia,
-            int veracidade,
-            int idUsuario) {
-        this(0, texto, fonte, dataCriacao, DataAlteracao, qtdUpvotes, qtdDownvotes, relevancia, veracidade, idUsuario);
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    public Proposicao(
-            String texto,
-            Date dataCriacao,
-            Date DataAlteracao,
-            int qtdUpvotes,
-            int qtdDownvotes,
-            int relevancia,
-            int veracidade,
-            int idUsuario) {
-        this(0, texto, "", dataCriacao, DataAlteracao, qtdUpvotes, qtdDownvotes, relevancia, veracidade, idUsuario);
-    }
+    @Column(nullable = false, length = 400)
+    private String texto;
+
+    @Column(length = 300)
+    private String fonte;
+
+    @Column(nullable = false)
+    private Date dataCriacao;
+
+    private Date dataAlteracao;
+
+    @Column(nullable = false)
+    private Integer qtdUpvotes;
+
+    @Column(nullable = false)
+    private Integer qtdDownvotes;
+
+    @Column(nullable = false)
+    private Integer relevancia;
+
+    @Column(nullable = false)
+    private Integer veracidade;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @ManyToMany(mappedBy = "proposicoesSeguindo")
+    private Set<Usuario> seguidores;
+
+    @ManyToMany
+    @JoinTable(
+            name = "proposicao_tem_resposta",
+            joinColumns = @JoinColumn(name = "proposicao_id"),
+            inverseJoinColumns = @JoinColumn(name = "resposta_id"))
+    private Set<Proposicao> respostas;
+
+    @ManyToMany(mappedBy = "respostas")
+    private Set<Proposicao> proposicoes;
 }

@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.argviewer.domain.model.entities.Proposicao;
-import com.argviewer.domain.model.requests.propositions.GetAllRequest;
+import com.argviewer.domain.model.dtos.ProposicaoDto;
+import com.argviewer.domain.model.requests.propositions.FindAllRequest;
 
 @RestController
 @RequestMapping("/api/Proposition")
-public class PropositionController {
+public class ProposicaoController {
 
     @GetMapping("/")
-    public ResponseEntity<GetAllRequest> getAll() {
+    public ResponseEntity<FindAllRequest> getAll() {
         return ResponseEntity
-                .ok(new GetAllRequest(List.of(new Proposicao(1, "some text", "fonte", Date.from(Instant.now()),
+                .ok(new FindAllRequest(List.of(new ProposicaoDto(1, "some text", "fonte", Date.from(Instant.now()),
                         Date.from(Instant.now()), 0, 0, 0, 0, 1))));
     }
 }

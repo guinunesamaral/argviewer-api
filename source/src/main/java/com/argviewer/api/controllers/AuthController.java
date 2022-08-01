@@ -1,5 +1,6 @@
 package com.argviewer.api.controllers;
 
+import com.argviewer.domain.interfaces.business.UsuarioService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,13 +14,10 @@ import com.argviewer.domain.model.requests.auth.RegisterRequest;
 @RequestMapping("/api/Auth")
 public class AuthController {
 
+    private UsuarioService usuarioBusiness;
+
     @GetMapping("/login")
     public String login(@RequestBody LoginRequest request) {
-        return request.toString();
-    }
-
-    @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
         return request.toString();
     }
 }
