@@ -2,6 +2,8 @@ package com.argviewer.domain.model.entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -31,8 +33,10 @@ public class Usuario {
     private String senha;
 
     @Column(nullable = false)
+    @CreatedDate
     private Date dataCriacao;
 
+    @LastModifiedDate
     private Date dataAlteracao;
 
     @Lob
