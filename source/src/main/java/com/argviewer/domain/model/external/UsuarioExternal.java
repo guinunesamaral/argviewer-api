@@ -1,8 +1,8 @@
 package com.argviewer.domain.model.external;
 
 import javax.validation.constraints.Email;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Date;
 
 public class UsuarioExternal {
     public int id;
@@ -11,8 +11,8 @@ public class UsuarioExternal {
     @Email
     public String email;
     public String senha;
-    public Date dataCriacao;
-    public Date dataAlteracao;
+    public LocalDateTime dataCriacao;
+    public LocalDateTime dataAlteracao;
     public byte[] foto;
     public boolean isAnonimo;
     public boolean isModerador;

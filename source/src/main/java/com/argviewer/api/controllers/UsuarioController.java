@@ -1,9 +1,10 @@
 package com.argviewer.api.controllers;
 
+import com.argviewer.domain.interfaces.mapper.ExternalMapper;
 import com.argviewer.domain.interfaces.services.UsuarioService;
-import com.argviewer.domain.interfaces.mapper.RequestMapper;
 import com.argviewer.domain.model.external.UsuarioExternal;
 import com.argviewer.domain.model.external.requests.usuario.SaveUsuarioRequest;
+import com.argviewer.domain.model.external.responses.user.CountUsuarioResponse;
 import com.argviewer.domain.model.external.responses.user.SaveUsuarioResponse;
 import com.argviewer.domain.model.internal.dtos.UsuarioDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class UsuarioController {
     private UsuarioService usuarioBusiness;
 
     @Autowired
-    private RequestMapper requestMapper;
+    private ExternalMapper requestMapper;
 
     @PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SaveUsuarioResponse> save(@RequestBody SaveUsuarioRequest request) {
@@ -58,7 +59,8 @@ public class UsuarioController {
     }
 
     @GetMapping(path = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> count() {
-        return ResponseEntity.ok(usuarioBusiness.count());
+    public ResponseEntity<CountUsuarioResponse> count() {
+        return ResponseEntity.ok(new CountUsuarioResponse(usuarioBusiness.count())
+        );
     }
 }

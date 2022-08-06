@@ -15,9 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @SpringBootApplication
 @ComponentScan("com.argviewer.*")
@@ -71,7 +69,7 @@ public class ApiApplication {
             proposicao = proposicaoRepository.save(
                     new Proposicao(
                             "Primeira",
-                            Date.from(Instant.now()),
+                            LocalDateTime.now(),
                             0,
                             0,
                             0,

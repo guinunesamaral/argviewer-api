@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Date;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(name = "UQ_Proposicao_Texto", columnNames = "texto")})
@@ -24,9 +24,9 @@ public class Proposicao {
     private String fonte;
 
     @Column(nullable = false)
-    private Date dataCriacao;
+    private LocalDateTime dataCriacao;
 
-    private Date dataAlteracao;
+    private LocalDateTime dataAlteracao;
 
     @Column(nullable = false)
     private Integer qtdUpvotes;
@@ -57,7 +57,7 @@ public class Proposicao {
     @ManyToMany(mappedBy = "respostas")
     private List<Proposicao> proposicoes;
 
-    public Proposicao(String texto, Date dataCriacao, Integer qtdUpvotes, Integer qtdDownvotes, Integer relevancia, Integer veracidade, Usuario usuario) {
+    public Proposicao(String texto, LocalDateTime dataCriacao, Integer qtdUpvotes, Integer qtdDownvotes, Integer relevancia, Integer veracidade, Usuario usuario) {
         this.texto = texto;
         this.dataCriacao = dataCriacao;
         this.qtdUpvotes = qtdUpvotes;

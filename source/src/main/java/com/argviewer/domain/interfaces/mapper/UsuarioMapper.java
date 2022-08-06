@@ -4,8 +4,6 @@ import com.argviewer.domain.model.internal.dtos.UsuarioDTO;
 import com.argviewer.domain.model.internal.entities.Usuario;
 import org.mapstruct.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Mapper(componentModel = "spring", uses = EloMapper.class)

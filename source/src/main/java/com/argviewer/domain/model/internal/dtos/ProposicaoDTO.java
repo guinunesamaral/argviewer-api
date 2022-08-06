@@ -2,8 +2,8 @@ package com.argviewer.domain.model.internal.dtos;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -21,9 +21,9 @@ public class ProposicaoDTO {
     private String fonte;
 
     @NonNull
-    private Date dataCriacao;
+    private LocalDateTime dataCriacao;
 
-    private Date dataAlteracao;
+    private LocalDateTime dataAlteracao;
 
     @NonNull
     private Integer qtdUpvotes;
