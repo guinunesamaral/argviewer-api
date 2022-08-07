@@ -1,4 +1,4 @@
-package com.argviewer.domain.model.external.responses.user;
+package com.argviewer.domain.model.external.responses.usuario;
 
 public class CountUsuarioResponse {
     public long qtdUsuarios;

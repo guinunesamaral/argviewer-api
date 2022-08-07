@@ -17,9 +17,9 @@ public interface UsuarioMapper {
     @Mapping(target = "seguindo", ignore = true)
     UsuarioDTO usuarioToDTO(Usuario usuario);
 
-    @Named("usuariosToUsuarioDtoList")
+    @Named("UsuariosToDtoList")
     @IterableMapping(qualifiedByName = "UsuarioToDTO")
-    List<UsuarioDTO> usuariosToUsuarioDtoList(List<Usuario> usuarios);
+    List<UsuarioDTO> usuariosToDtoList(List<Usuario> usuarios);
 
     @Named("DTOToUsuario")
     @Mapping(target = "elo", ignore = true)

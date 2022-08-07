@@ -13,7 +13,7 @@ public interface ExternalMapper {
     ExternalMapper INSTANCE = Mappers.getMapper(ExternalMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "elo", ignore = true)
+    @Mapping(target = "elo", qualifiedByName = "EloExternalToDTO")
     @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
     @Mapping(target = "dataAlteracao", expression = "java(null)")
     @Mapping(target = "foto", expression = "java(null)")
@@ -26,8 +26,8 @@ public interface ExternalMapper {
     @Mapping(target = "seguindo", ignore = true)
     UsuarioDTO usuarioExternalToDTO(UsuarioExternal usuarioExternal);
 
-    @Named("DTOToUsuarioExternal")
-    @Mapping(target = "elo", qualifiedByName = "DTOToEloExternal")
+    @Named("DtoToUsuarioExternal")
+    @Mapping(target = "elo", qualifiedByName = "DtoToEloExternal")
     @Mapping(target = "historicos", ignore = true)
     @Mapping(target = "proposicoesCriadas", ignore = true)
     @Mapping(target = "proposicoesSeguindo", ignore = true)
@@ -35,24 +35,32 @@ public interface ExternalMapper {
     @Mapping(target = "seguindo", ignore = true)
     UsuarioExternal dtoToUsuarioExternal(UsuarioDTO dto);
 
-    @IterableMapping(qualifiedByName = "DTOToUsuarioExternal")
-    List<UsuarioExternal> dtosToUsuarioExternalList(List<UsuarioDTO> dto);
+    @IterableMapping(qualifiedByName = "DtoToUsuarioExternal")
+    List<UsuarioExternal> dtosToUsuarioExternalList(List<UsuarioDTO> dtos);
 
     @Named("EloExternalToDTO")
     @Mapping(target = "usuarios", ignore = true)
     EloDTO eloExternalToDTO(EloExternal eloExternal);
 
-    @Named("DTOToEloExternal")
+    @Named("DtoToEloExternal")
     @Mapping(target = "usuarios", ignore = true)
     EloExternal dtoToEloExternal(EloDTO dto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "usuario", ignore = true)
     @Mapping(target = "seguidores", ignore = true)
     @Mapping(target = "respostas", ignore = true)
     @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
     @Mapping(target = "dataAlteracao", ignore = true)
     ProposicaoDTO proposicaoExternalToDTO(ProposicaoExternal proposicaoExternal);
+
+    @Named("DtoToProposicaoExternal")
+    @Mapping(target = "usuario", qualifiedByName = "DtoToUsuarioExternal")
+    @Mapping(target = "seguidores", ignore = true)
+    @Mapping(target = "respostas", ignore = true)
+    ProposicaoExternal dtoToProposicaoExternal(ProposicaoDTO dto);
+
+    @IterableMapping(qualifiedByName = "DtoToProposicaoExternal")
+    List<ProposicaoExternal> dtosToProposicaoExternalList(List<ProposicaoDTO> dtos);
 
     @Mapping(target = "tipoAcao", ignore = true)
     @Mapping(target = "usuario", ignore = true)

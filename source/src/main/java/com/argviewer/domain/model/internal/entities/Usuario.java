@@ -6,7 +6,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(nullable = false, length = 100)
     private String nome;
@@ -47,10 +46,13 @@ public class Usuario {
     private byte[] foto;
 
     @Column(nullable = false)
-    private Boolean isAnonimo;
+    private boolean isActive;
 
     @Column(nullable = false)
-    private Boolean isModerador;
+    private boolean isAnonimo;
+
+    @Column(nullable = false)
+    private boolean isModerador;
 
     @ManyToOne
     @JoinColumn(name = "elo_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Usuario_Elo"))

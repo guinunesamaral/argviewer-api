@@ -1,4 +1,4 @@
-package com.argviewer.domain.model.external.responses.user;
+package com.argviewer.domain.model.external.responses.usuario;
 
 import com.argviewer.domain.model.external.UsuarioExternal;
 

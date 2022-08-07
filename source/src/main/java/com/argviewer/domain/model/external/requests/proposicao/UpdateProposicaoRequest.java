@@ -1,7 +1,7 @@
-package com.argviewer.domain.model.external.requests.proposicoes;
+package com.argviewer.domain.model.external.requests.proposicao;
 
 import com.argviewer.domain.model.external.ProposicaoExternal;
 
-public class SaveRequest {
+public class UpdateProposicaoRequest {
     public ProposicaoExternal proposicao;
 }

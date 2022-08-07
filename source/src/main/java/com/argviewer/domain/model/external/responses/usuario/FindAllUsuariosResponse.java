@@ -1,13 +1,13 @@
-package com.argviewer.domain.model.external.responses.user;
+package com.argviewer.domain.model.external.responses.usuario;
 
 import com.argviewer.domain.model.external.UsuarioExternal;
 
 import java.util.List;
 
-public class FindAllResponse {
+public class FindAllUsuariosResponse {
     public List<UsuarioExternal> usuarios;
 
-    public FindAllResponse(List<UsuarioExternal> usuarios) {
+    public FindAllUsuariosResponse(List<UsuarioExternal> usuarios) {
         this.usuarios = usuarios;
     }
 }

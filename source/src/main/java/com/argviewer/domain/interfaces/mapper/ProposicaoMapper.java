@@ -8,7 +8,7 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {UsuarioMapper.class, EloMapper.class})
+@Mapper(componentModel = "spring", uses = UsuarioMapper.class)
 public interface ProposicaoMapper {
     @Named("ProposicaoToDTO")
     @Mapping(target = "usuario", qualifiedByName = "UsuarioToDTO")
@@ -16,11 +16,9 @@ public interface ProposicaoMapper {
     @Mapping(target = "respostas", ignore = true)
     ProposicaoDTO proposicaoToDTO(Proposicao proposicao);
 
-    @Named("SeguidoresToDTO")
     @IterableMapping(qualifiedByName = "UsuarioToDTO")
-    List<UsuarioDTO> seguidoresToDTO(List<Usuario> usuarios);
+    List<UsuarioDTO> seguidoresToDtoList(List<Usuario> usuarios);
 
-    @Named("proposicoesToProposicaoDtoList")
     @IterableMapping(qualifiedByName = "ProposicaoToDTO")
-    List<ProposicaoDTO> proposicoesToProposicaoDtoList(List<Proposicao> proposicoes);
+    List<ProposicaoDTO> proposicoesToDtoList(List<Proposicao> proposicoes);
 }

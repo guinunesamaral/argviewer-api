@@ -41,7 +41,7 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
 
     @Override
     public List<UsuarioDTO> findAll() {
-        return mapper.usuariosToUsuarioDtoList(usuarioRepository.findAll());
+        return mapper.usuariosToDtoList(usuarioRepository.findAll());
     }
 
     @Override

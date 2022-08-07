@@ -1,5 +1,5 @@
 package com.argviewer.domain.model.external.responses.proposicao;
 
-public class DeleteResponse {
+public class DeleteProposicaoResponse {
     public boolean deleted;
 }

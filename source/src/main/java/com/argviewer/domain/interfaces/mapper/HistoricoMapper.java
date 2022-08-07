@@ -14,7 +14,7 @@ public interface HistoricoMapper {
     @Mapping(target = "usuario", qualifiedByName = "UsuarioToDTO")
     HistoricoDTO historicoToDTO(Historico historico);
 
-    @Named("historicosToHistoricoDtoList")
+    @Named("HistoricosToDtoList")
     @IterableMapping(qualifiedByName = "HistoricoToDTO")
-    List<HistoricoDTO> historicosToHistoricoDtoList(List<Historico> historico);
+    List<HistoricoDTO> historicosToDtoList(List<Historico> historicos);
 }
