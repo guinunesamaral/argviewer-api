@@ -3,50 +3,52 @@ package com.argviewer.services;
 import com.argviewer.domain.interfaces.mapper.UsuarioMapper;
 import com.argviewer.domain.interfaces.repository.EloRepository;
 import com.argviewer.domain.interfaces.repository.UsuarioRepository;
-import com.argviewer.domain.model.internal.dtos.UsuarioDTO;
-import com.argviewer.domain.model.internal.entities.Usuario;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.argviewer.domain.model.dtos.UsuarioDTO;
+import com.argviewer.domain.model.entities.Elo;
+import com.argviewer.domain.model.entities.Usuario;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.services.UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private EloRepository eloRepository;
+    private final EloRepository eloRepository;
 
-    @Autowired
-    private UsuarioMapper mapper;
+    private final UsuarioMapper usuarioMapper;
 
-    @Override
-    public int save(UsuarioDTO entity) {
-        if (usuarioRepository.findByEmail("guilherme@email.com") != null)
-            usuarioRepository.deleteByEmail("guilherme@email.com");
-
-        Usuario u = mapper.dtoToUsuario(entity);
-        u.setElo(eloRepository.findById(1).get());
-
-        return usuarioRepository.save(u).getId();
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, EloRepository eloRepository, UsuarioMapper usuarioMapper) {
+        this.usuarioRepository = usuarioRepository;
+        this.eloRepository = eloRepository;
+        this.usuarioMapper = usuarioMapper;
     }
 
     @Override
-    public UsuarioDTO findById(Integer id) {
-        return mapper.usuarioToDTO(usuarioRepository.findById(id).get());
+    public int create(UsuarioDTO dto) {
+        Optional<Elo> elo = eloRepository.findById(1);
+        Usuario usuario = usuarioMapper.dtoToUsuario(dto);
+        usuario.setElo(elo.orElse(null));
+        return usuarioRepository.save(usuario).getId();
+    }
+
+    @Override
+    public void update(UsuarioDTO dto) {
+        Usuario usuario = usuarioRepository.findById(dto.getId()).orElseThrow();
+        usuarioMapper.dtoToUsuario(dto, usuario);
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public UsuarioDTO findById(int id) {
+        return usuarioMapper.usuarioToDTO(usuarioRepository.findById(id).orElseThrow());
     }
 
     @Override
     public List<UsuarioDTO> findAll() {
-        return mapper.usuariosToDtoList(usuarioRepository.findAll());
-    }
-
-    @Override
-    public boolean existsById(Integer id) {
-        return usuarioRepository.existsById(id);
+        return usuarioMapper.usuariosToDtoList(usuarioRepository.findAll());
     }
 
     @Override
@@ -55,12 +57,8 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
     }
 
     @Override
-    public void deleteById(Integer id) {
-        usuarioRepository.deleteById(id);
-    }
-
-    @Override
-    public void delete(UsuarioDTO entity) {
-
+    public void inactivate(int id) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+        usuario.setActive(false);
     }
 }

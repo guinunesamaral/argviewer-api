@@ -1,7 +1,7 @@
 package com.argviewer.domain.interfaces.mapper;
 
-import com.argviewer.domain.model.internal.dtos.UsuarioDTO;
-import com.argviewer.domain.model.internal.entities.Usuario;
+import com.argviewer.domain.model.dtos.UsuarioDTO;
+import com.argviewer.domain.model.entities.Usuario;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -29,4 +29,7 @@ public interface UsuarioMapper {
     @Mapping(target = "seguidores", ignore = true)
     @Mapping(target = "seguindo", ignore = true)
     Usuario dtoToUsuario(UsuarioDTO dto);
+
+    @InheritConfiguration
+    void dtoToUsuario(UsuarioDTO dto, @MappingTarget Usuario usuario);
 }

@@ -1,9 +1,9 @@
 package com.argviewer.domain.interfaces.mapper;
 
-import com.argviewer.domain.model.internal.dtos.ProposicaoDTO;
-import com.argviewer.domain.model.internal.dtos.UsuarioDTO;
-import com.argviewer.domain.model.internal.entities.Proposicao;
-import com.argviewer.domain.model.internal.entities.Usuario;
+import com.argviewer.domain.model.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.dtos.UsuarioDTO;
+import com.argviewer.domain.model.entities.Proposicao;
+import com.argviewer.domain.model.entities.Usuario;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -21,4 +21,12 @@ public interface ProposicaoMapper {
 
     @IterableMapping(qualifiedByName = "ProposicaoToDTO")
     List<ProposicaoDTO> proposicoesToDtoList(List<Proposicao> proposicoes);
+
+    @Mapping(target = "usuario", qualifiedByName = "DTOToUsuario")
+    @Mapping(target = "seguidores", ignore = true)
+    @Mapping(target = "respostas", ignore = true)
+    Proposicao dtoToProposicao(ProposicaoDTO dto);
+
+    @InheritConfiguration
+    void dtoToProposicao(ProposicaoDTO dto, @MappingTarget Proposicao proposicao);
 }

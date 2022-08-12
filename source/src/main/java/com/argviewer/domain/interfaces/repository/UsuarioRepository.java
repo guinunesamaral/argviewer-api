@@ -1,12 +1,10 @@
 package com.argviewer.domain.interfaces.repository;
 
-import com.argviewer.domain.model.internal.entities.Usuario;
+import com.argviewer.domain.model.entities.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
-    Usuario findByEmail(String email);
-
-    @Transactional
-    void deleteByEmail(String email);
+    Optional<Usuario> findByEmail(String email);
 }

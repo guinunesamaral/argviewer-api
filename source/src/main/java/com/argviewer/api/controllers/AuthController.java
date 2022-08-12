@@ -1,21 +1,28 @@
 package com.argviewer.api.controllers;
 
-import com.argviewer.domain.interfaces.services.UsuarioService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.argviewer.domain.interfaces.services.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import com.argviewer.domain.model.external.requests.auth.LoginRequest;
+import com.argviewer.domain.model.requests.auth.LoginRequest;
 
 @RestController
 @RequestMapping("/api/Auth")
 public class AuthController {
 
-    private UsuarioService usuarioBusiness;
+    @Autowired
+    private AuthService authService;
 
     @GetMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
-        return request.toString();
+    public ResponseEntity<String> login(@RequestBody String emailNickname, @RequestBody String senha) {
+        String token = authService.login(emailNickname, senha);
+        return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/validateToken")
+    public ResponseEntity<Boolean> validateToken(@RequestBody String token) {
+        boolean isTokenValid = authService.validateToken(token);
+        return ResponseEntity.ok(isTokenValid);
     }
 }

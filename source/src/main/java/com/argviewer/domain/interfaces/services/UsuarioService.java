@@ -1,22 +1,20 @@
 package com.argviewer.domain.interfaces.services;
 
-import com.argviewer.domain.model.internal.dtos.UsuarioDTO;
+import com.argviewer.domain.model.dtos.UsuarioDTO;
 
 import java.util.List;
 
 public interface UsuarioService {
 
-    int save(UsuarioDTO entity);
+    int create(UsuarioDTO dto);
 
-    UsuarioDTO findById(Integer id);
+    void update(UsuarioDTO dto);
 
-    boolean existsById(Integer integer);
+    UsuarioDTO findById(int id);
 
     List<UsuarioDTO> findAll();
 
     long count();
 
-    void deleteById(Integer id);
-
-    void delete(UsuarioDTO entity);
+    void inactivate(int id);
 }

@@ -1,7 +1,7 @@
 package com.argviewer.domain.interfaces.mapper;
 
-import com.argviewer.domain.model.internal.dtos.HistoricoDTO;
-import com.argviewer.domain.model.internal.entities.Historico;
+import com.argviewer.domain.model.dtos.HistoricoDTO;
+import com.argviewer.domain.model.entities.Historico;
 import org.mapstruct.*;
 
 import java.util.List;

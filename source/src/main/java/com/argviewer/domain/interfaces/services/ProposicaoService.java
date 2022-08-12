@@ -1,22 +1,20 @@
 package com.argviewer.domain.interfaces.services;
 
-import com.argviewer.domain.model.internal.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.dtos.ProposicaoDTO;
 
 import java.util.List;
 
 public interface ProposicaoService {
 
-    int save(ProposicaoDTO entity);
+    int create(ProposicaoDTO dto);
 
-    ProposicaoDTO findById(Integer id);
+    void update(ProposicaoDTO dto);
 
-    boolean existsById(Integer integer);
+    ProposicaoDTO findById(int id);
 
-    List<ProposicaoDTO> findAll();
+    List<ProposicaoDTO> findAll(Integer idUsuario);
 
-    long count();
+    long count(Integer idUsuario);
 
-    void deleteById(Integer id);
-
-    void delete(ProposicaoDTO entity);
+    void deleteById(int id);
 }

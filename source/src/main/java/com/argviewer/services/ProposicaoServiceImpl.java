@@ -1,7 +1,10 @@
 package com.argviewer.services;
 
+import com.argviewer.domain.interfaces.mapper.ProposicaoMapper;
+import com.argviewer.domain.interfaces.repository.ProposicaoRepository;
 import com.argviewer.domain.interfaces.services.ProposicaoService;
-import com.argviewer.domain.model.internal.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.entities.Proposicao;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,38 +12,49 @@ import java.util.List;
 @Service
 public class ProposicaoServiceImpl implements ProposicaoService {
 
-    @Override
-    public int save(ProposicaoDTO entity) {
-        return 0;
+    private final ProposicaoRepository proposicaoRepository;
+
+    private final ProposicaoMapper proposicaoMapper;
+
+    public ProposicaoServiceImpl(ProposicaoRepository proposicaoRepository, ProposicaoMapper proposicaoMapper) {
+        this.proposicaoRepository = proposicaoRepository;
+        this.proposicaoMapper = proposicaoMapper;
     }
 
     @Override
-    public ProposicaoDTO findById(Integer id) {
-        return null;
+    public int create(ProposicaoDTO dto) {
+        return proposicaoRepository.save(proposicaoMapper.dtoToProposicao(dto)).getId();
     }
 
     @Override
-    public boolean existsById(Integer integer) {
-        return false;
+    public void update(ProposicaoDTO dto) {
+        Proposicao proposicao = proposicaoRepository.findById(dto.getId()).orElseThrow();
+        proposicaoMapper.dtoToProposicao(dto, proposicao);
+        proposicaoRepository.save(proposicao);
     }
 
     @Override
-    public List<ProposicaoDTO> findAll() {
-        return null;
+    public ProposicaoDTO findById(int id) {
+        return proposicaoMapper.proposicaoToDTO(proposicaoRepository.findById(id).orElseThrow());
     }
 
     @Override
-    public long count() {
-        return 0;
+    public List<ProposicaoDTO> findAll(Integer idUsuario) {
+        List<Proposicao> proposicoes = idUsuario == null
+                ? proposicaoRepository.findAll()
+                : proposicaoRepository.findByIdUsuario(idUsuario);
+        return proposicaoMapper.proposicoesToDtoList(proposicoes);
     }
 
     @Override
-    public void deleteById(Integer id) {
-
+    public long count(Integer idUsuario) {
+        return idUsuario == null
+                ? proposicaoRepository.count()
+                : proposicaoRepository.countByIdUsuario(idUsuario);
     }
 
     @Override
-    public void delete(ProposicaoDTO entity) {
-
+    public void deleteById(int id) {
+        proposicaoRepository.deleteById(id);
     }
 }
