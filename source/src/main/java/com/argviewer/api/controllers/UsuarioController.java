@@ -1,19 +1,11 @@
 package com.argviewer.api.controllers;
 
-import com.argviewer.domain.interfaces.mapper.ExternalMapper;
 import com.argviewer.domain.interfaces.services.UsuarioService;
-import com.argviewer.domain.model.external.UsuarioExternal;
-import com.argviewer.domain.model.external.requests.usuario.SaveUsuarioRequest;
-import com.argviewer.domain.model.external.responses.usuario.CountUsuarioResponse;
-import com.argviewer.domain.model.external.responses.usuario.SaveUsuarioResponse;
-import com.argviewer.domain.model.internal.dtos.UsuarioDTO;
+import com.argviewer.domain.model.dtos.UsuarioDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.argviewer.domain.model.external.responses.usuario.FindAllUsuariosResponse;
-import com.argviewer.domain.model.external.responses.usuario.FindUsuarioByIdResponse;
 
 import java.util.List;
 
@@ -24,42 +16,39 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Autowired
-    private ExternalMapper externalMapper;
+    @PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer> create(@RequestBody UsuarioDTO request) {
+        int id = usuarioService.create(request);
+        return ResponseEntity.ok(id);
+    }
 
-    @PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SaveUsuarioResponse> save(@RequestBody SaveUsuarioRequest request) {
-        UsuarioDTO dto = externalMapper.usuarioExternalToDTO(request);
-        int id = usuarioService.save(dto);
-        return ResponseEntity.ok(
-                new SaveUsuarioResponse(
-                        id
-                ));
+    @PutMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> update(@RequestBody UsuarioDTO request) {
+        usuarioService.update(request);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FindUsuarioByIdResponse> findById(@PathVariable int id) {
+    public ResponseEntity<UsuarioDTO> findById(@PathVariable int id) {
         UsuarioDTO dto = usuarioService.findById(id);
-        UsuarioExternal usuario = externalMapper.dtoToUsuarioExternal(dto);
-        return ResponseEntity.ok(
-                new FindUsuarioByIdResponse(
-                        usuario
-                ));
+        return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<FindAllUsuariosResponse> findAll() {
+    @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<UsuarioDTO>> findAll() {
         List<UsuarioDTO> dtoList = usuarioService.findAll();
-        List<UsuarioExternal> usuarioExternalList = externalMapper.dtosToUsuarioExternalList(dtoList);
-        return ResponseEntity.ok(
-                new FindAllUsuariosResponse(
-                        usuarioExternalList
-                ));
+        return ResponseEntity.ok(dtoList);
     }
 
     @GetMapping(path = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CountUsuarioResponse> count() {
+    public ResponseEntity<Long> count() {
         long qtdUsuarios = usuarioService.count();
-        return ResponseEntity.ok(new CountUsuarioResponse(qtdUsuarios));
+        return ResponseEntity.ok(qtdUsuarios);
+    }
+
+    @PatchMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> inactivate(@PathVariable int id) {
+        usuarioService.inactivate(id);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,7 +1,7 @@
 package com.argviewer.domain.interfaces.mapper;
 
-import com.argviewer.domain.model.internal.dtos.TipoAcaoDTO;
-import com.argviewer.domain.model.internal.entities.TipoAcao;
+import com.argviewer.domain.model.dtos.TipoAcaoDTO;
+import com.argviewer.domain.model.entities.TipoAcao;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
