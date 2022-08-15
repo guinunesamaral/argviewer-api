@@ -22,7 +22,8 @@ public interface ProposicaoMapper {
     @IterableMapping(qualifiedByName = "ProposicaoToDTO")
     List<ProposicaoDTO> proposicoesToDtoList(List<Proposicao> proposicoes);
 
-    @Mapping(target = "usuario", qualifiedByName = "DTOToUsuario")
+    @Mapping(target = "dataCriacao", ignore = true)
+    @Mapping(target = "usuario", qualifiedByName = "DtoToUsuario")
     @Mapping(target = "seguidores", ignore = true)
     @Mapping(target = "respostas", ignore = true)
     Proposicao dtoToProposicao(ProposicaoDTO dto);

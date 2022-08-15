@@ -1,7 +1,6 @@
 package com.argviewer.domain.model.entities;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,10 +8,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity(name = "proposicao")
-@Table(uniqueConstraints = {@UniqueConstraint(name = "UQ_Proposicao_Texto", columnNames = "texto")})
+@Table(uniqueConstraints = @UniqueConstraint(name = "UQ_Proposicao_Texto", columnNames = "texto"))
 @Getter
 @Setter
-@NoArgsConstructor
 public class Proposicao {
 
     @Id
@@ -26,7 +24,7 @@ public class Proposicao {
     private String fonte;
 
     @Column(nullable = false)
-    private LocalDateTime dataCriacao;
+    private LocalDateTime dataCriacao = LocalDateTime.now();
 
     private LocalDateTime dataAlteracao;
 
@@ -52,20 +50,20 @@ public class Proposicao {
     @ManyToMany
     @JoinTable(
             name = "proposicao_tem_resposta",
-            joinColumns = @JoinColumn(name = "proposicao_id"),
-            inverseJoinColumns = @JoinColumn(name = "resposta_id", foreignKey = @ForeignKey(name = "FK_Proposicao_Resposta")))
+            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTemResposta_Proposicao")),
+            inverseJoinColumns = @JoinColumn(name = "resposta_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTemResposta_Resposta")))
     private List<Proposicao> respostas;
 
     @ManyToMany(mappedBy = "respostas")
     private List<Proposicao> proposicoes;
 
-    public Proposicao(String texto, LocalDateTime dataCriacao, int qtdUpvotes, int qtdDownvotes, int relevancia, int veracidade, Usuario usuario) {
+    public Proposicao() {
+    }
+
+    public Proposicao(int id, String texto, String fonte, Usuario usuario) {
+        this.id = id;
         this.texto = texto;
-        this.dataCriacao = dataCriacao;
-        this.qtdUpvotes = qtdUpvotes;
-        this.qtdDownvotes = qtdDownvotes;
-        this.relevancia = relevancia;
-        this.veracidade = veracidade;
+        this.fonte = fonte;
         this.usuario = usuario;
     }
 }

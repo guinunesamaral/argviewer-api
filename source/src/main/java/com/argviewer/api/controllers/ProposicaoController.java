@@ -16,15 +16,28 @@ public class ProposicaoController {
     @Autowired
     private ProposicaoService proposicaoService;
 
-    @PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> create(@RequestBody ProposicaoDTO request) {
-        int id = proposicaoService.create(request);
+    @PostMapping(path = "/")
+    public ResponseEntity<Integer> create(@RequestBody ProposicaoDTO dto) {
+        int id = proposicaoService.create(dto);
         return ResponseEntity.ok(id);
     }
 
-    @PutMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@RequestBody ProposicaoDTO request) {
-        proposicaoService.update(request);
+    @PostMapping(path = "/{idProposicao}/resposta")
+    public ResponseEntity<Integer> addResposta(@PathVariable int idProposicao, @RequestBody ProposicaoDTO dto) {
+        int idResposta = proposicaoService.create(dto);
+        proposicaoService.addResposta(idProposicao, idResposta);
+        return ResponseEntity.ok(idResposta);
+    }
+
+    @PostMapping(path = "/{idProposicao}/seguidor")
+    public ResponseEntity<Void> addSeguidor(@PathVariable int idProposicao, @RequestBody int idSeguidor) {
+        proposicaoService.addSeguidor(idProposicao, idSeguidor);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(path = "/")
+    public ResponseEntity<Void> update(@RequestBody ProposicaoDTO dto) {
+        proposicaoService.update(dto);
         return ResponseEntity.ok().build();
     }
 
@@ -42,11 +55,17 @@ public class ProposicaoController {
         return ResponseEntity.ok(dtoList);
     }
 
-    @GetMapping(path = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/count")
     public ResponseEntity<Long> count(@RequestParam(required = false) Integer idUsuario) {
         long qtdProposicoes = idUsuario == null
                 ? proposicaoService.count(null)
                 : proposicaoService.count(idUsuario);
         return ResponseEntity.ok(qtdProposicoes);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable int id) {
+        proposicaoService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }

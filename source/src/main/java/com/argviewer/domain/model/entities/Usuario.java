@@ -58,24 +58,21 @@ public class Usuario {
     @JoinColumn(name = "elo_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Usuario_Elo"))
     private Elo elo;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
-    private List<Historico> historicos;
-
     @OneToMany(mappedBy = "usuario")
     private List<Proposicao> proposicoesCriadas;
 
     @ManyToMany()
     @JoinTable(
-            name = "usuario_segue_proposicao",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_Proposicao_Seguidor")))
+            name = "proposicao_tem_seguidor",
+            joinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTemSeguidor_Seguidor")),
+            inverseJoinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTemSeguidor_Proposicao")))
     private List<Proposicao> proposicoesSeguindo;
 
     @ManyToMany()
     @JoinTable(
             name = "usuario_tem_seguidor",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_Usuario_Seguidor")))
+            joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_UsuarioTemSeguidor_Usuario")),
+            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_UsuarioTemSeguidor_Seguidor")))
     private List<Usuario> seguidores;
 
     @ManyToMany(mappedBy = "seguidores")
@@ -84,20 +81,13 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nome, String nickname, String email, String senha, LocalDateTime dataCriacao, byte[] foto, boolean isAnonimo, boolean isModerador, Elo elo) {
+    public Usuario(int id, String nome, String nickname, String email, String senha, byte[] foto, Elo elo) {
+        this.id = id;
         this.nome = nome;
         this.nickname = nickname;
         this.email = email;
         this.senha = senha;
-        this.dataCriacao = dataCriacao;
         this.foto = foto;
-        this.isAnonimo = isAnonimo;
-        this.isModerador = isModerador;
         this.elo = elo;
-    }
-
-    public Usuario(Integer id, String nome, String nickname, String email, String senha, LocalDateTime dataCriacao, byte[] foto, boolean isAnonimo, boolean isModerador, Elo elo) {
-        this(nome, nickname, email, senha, dataCriacao, foto, isAnonimo, isModerador, elo);
-        this.id = id;
     }
 }

@@ -10,7 +10,6 @@ import java.util.List;
 public interface UsuarioMapper {
     @Named("UsuarioToDTO")
     @Mapping(target = "elo", qualifiedByName = "EloToDTO")
-    @Mapping(target = "historicos", ignore = true)
     @Mapping(target = "proposicoesCriadas", ignore = true)
     @Mapping(target = "proposicoesSeguindo", ignore = true)
     @Mapping(target = "seguidores", ignore = true)
@@ -21,9 +20,11 @@ public interface UsuarioMapper {
     @IterableMapping(qualifiedByName = "UsuarioToDTO")
     List<UsuarioDTO> usuariosToDtoList(List<Usuario> usuarios);
 
-    @Named("DTOToUsuario")
+    @Named("DtoToUsuario")
+    @Mapping(target = "dataCriacao", ignore = true)
+    @Mapping(target = "dataAlteracao", ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "elo", ignore = true)
-    @Mapping(target = "historicos", ignore = true)
     @Mapping(target = "proposicoesCriadas", ignore = true)
     @Mapping(target = "proposicoesSeguindo", ignore = true)
     @Mapping(target = "seguidores", ignore = true)

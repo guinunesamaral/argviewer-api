@@ -8,6 +8,10 @@ public interface ProposicaoService {
 
     int create(ProposicaoDTO dto);
 
+    void addResposta(int idProposicao, int idResposta);
+
+    void addSeguidor(int idProposicao, int idSeguidor);
+
     void update(ProposicaoDTO dto);
 
     ProposicaoDTO findById(int id);

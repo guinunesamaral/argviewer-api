@@ -4,12 +4,13 @@ import com.argviewer.domain.interfaces.mapper.UsuarioMapper;
 import com.argviewer.domain.interfaces.repository.EloRepository;
 import com.argviewer.domain.interfaces.repository.UsuarioRepository;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
-import com.argviewer.domain.model.entities.Elo;
 import com.argviewer.domain.model.entities.Usuario;
+import com.argviewer.domain.model.exceptions.EntityNotFoundException;
+import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.services.UsuarioService {
@@ -28,22 +29,34 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
 
     @Override
     public int create(UsuarioDTO dto) {
-        Optional<Elo> elo = eloRepository.findById(1);
         Usuario usuario = usuarioMapper.dtoToUsuario(dto);
-        usuario.setElo(elo.orElse(null));
+        usuario.setElo(eloRepository
+                .findById(1)
+                .orElseThrow(() -> new EntityNotFoundException("Elo não encontrado."))
+        );
         return usuarioRepository.save(usuario).getId();
     }
 
     @Override
-    public void update(UsuarioDTO dto) {
-        Usuario usuario = usuarioRepository.findById(dto.getId()).orElseThrow();
+    public void update(UsuarioDTO dto) throws IllegalOperationException {
+        Usuario usuario = usuarioRepository
+                .findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado."));
+
+        if (!usuario.isActive())
+            throw new IllegalOperationException("Não é possível atualizar um usuário inativo.");
+
+        usuario.setDataAlteracao(LocalDateTime.now());
         usuarioMapper.dtoToUsuario(dto, usuario);
         usuarioRepository.save(usuario);
     }
 
     @Override
     public UsuarioDTO findById(int id) {
-        return usuarioMapper.usuarioToDTO(usuarioRepository.findById(id).orElseThrow());
+        Usuario usuario = usuarioRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+        return usuarioMapper.usuarioToDTO(usuario);
     }
 
     @Override
@@ -58,7 +71,10 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
 
     @Override
     public void inactivate(int id) {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+        Usuario usuario = usuarioRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
         usuario.setActive(false);
+        usuarioRepository.save(usuario);
     }
 }

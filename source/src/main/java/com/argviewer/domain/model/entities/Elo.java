@@ -1,15 +1,16 @@
 package com.argviewer.domain.model.entities;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity(name = "elo")
-@Table(uniqueConstraints = {@UniqueConstraint(name = "UQ_Elo_Titulo", columnNames = "titulo")})
+@Table(uniqueConstraints = @UniqueConstraint(name = "UQ_Elo_Titulo", columnNames = "titulo"))
 @Getter
 @Setter
-@AllArgsConstructor
 public class Elo {
 
     @Id
@@ -30,11 +31,6 @@ public class Elo {
 
     public Elo(int id, String titulo, String descricao) {
         this.id = id;
-        this.titulo = titulo;
-        this.descricao = descricao;
-    }
-
-    public Elo(String titulo, String descricao) {
         this.titulo = titulo;
         this.descricao = descricao;
     }
