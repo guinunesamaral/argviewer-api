@@ -3,7 +3,7 @@ package com.argviewer.domain.interfaces.services;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
 
-import java.util.List;
+import java.util.Set;
 
 public interface UsuarioService {
 
@@ -13,7 +13,7 @@ public interface UsuarioService {
 
     UsuarioDTO findById(int id);
 
-    List<UsuarioDTO> findAll();
+    Set<UsuarioDTO> findAll();
 
     long count();
 

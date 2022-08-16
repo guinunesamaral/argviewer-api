@@ -2,7 +2,7 @@ package com.argviewer.domain.interfaces.services;
 
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 
-import java.util.List;
+import java.util.Set;
 
 public interface ProposicaoService {
 
@@ -16,7 +16,7 @@ public interface ProposicaoService {
 
     ProposicaoDTO findById(int id);
 
-    List<ProposicaoDTO> findAll(Integer idUsuario);
+    Set<ProposicaoDTO> findAll(Integer idUsuario);
 
     long count(Integer idUsuario);
 

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ProposicaoServiceImpl implements ProposicaoService {
@@ -42,7 +43,6 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     @Override
     public int create(ProposicaoDTO dto) {
         // Buscar proposições na tabela proposicao_tem_resposta e ver se alguma possui o texto do dto acima
-
         String line = String.format(
                 "python %s %s %s",
                 resolvePythonScriptPath("python/sentence_similarity.py"),
@@ -118,9 +118,9 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public List<ProposicaoDTO> findAll(Integer idUsuario) {
-        List<Proposicao> proposicoes = idUsuario == null
-                ? proposicaoRepository.findAll()
+    public Set<ProposicaoDTO> findAll(Integer idUsuario) {
+        Set<Proposicao> proposicoes = idUsuario == null
+                ? Set.copyOf(proposicaoRepository.findAll())
                 : proposicaoRepository.findByIdUsuario(idUsuario);
         return proposicaoMapper.proposicoesToDtoList(proposicoes);
     }

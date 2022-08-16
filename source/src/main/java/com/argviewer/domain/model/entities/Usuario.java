@@ -7,7 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Entity(name = "usuario")
 @Table(uniqueConstraints = {
@@ -59,24 +59,20 @@ public class Usuario {
     private Elo elo;
 
     @OneToMany(mappedBy = "usuario")
-    private List<Proposicao> proposicoesCriadas;
-
-    @ManyToMany()
-    @JoinTable(
-            name = "proposicao_tem_seguidor",
-            joinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTemSeguidor_Seguidor")),
-            inverseJoinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTemSeguidor_Proposicao")))
-    private List<Proposicao> proposicoesSeguindo;
-
-    @ManyToMany()
-    @JoinTable(
-            name = "usuario_tem_seguidor",
-            joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_UsuarioTemSeguidor_Usuario")),
-            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_UsuarioTemSeguidor_Seguidor")))
-    private List<Usuario> seguidores;
+    private Set<Proposicao> proposicoesCriadas;
 
     @ManyToMany(mappedBy = "seguidores")
-    private List<Usuario> seguindo;
+    private Set<Proposicao> proposicoesSeguindo;
+
+    @ManyToMany
+    @JoinTable(
+            name = "usuario_seguidor",
+            joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_UsuarioSeguidor_Usuario")),
+            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_UsuarioSeguidor_Seguidor")))
+    private Set<Usuario> seguidores;
+
+    @ManyToMany(mappedBy = "seguidores")
+    private Set<Usuario> seguindo;
 
     public Usuario() {
     }

@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/Proposicao")
@@ -48,8 +48,8 @@ public class ProposicaoController {
     }
 
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ProposicaoDTO>> findAll(@RequestParam(required = false) Integer idUsuario) {
-        List<ProposicaoDTO> dtoList = idUsuario == null
+    public ResponseEntity<Set<ProposicaoDTO>> findAll(@RequestParam(required = false) Integer idUsuario) {
+        Set<ProposicaoDTO> dtoList = idUsuario == null
                 ? proposicaoService.findAll(null)
                 : proposicaoService.findAll(idUsuario);
         return ResponseEntity.ok(dtoList);

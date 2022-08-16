@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/Usuario")
@@ -35,8 +35,8 @@ public class UsuarioController {
     }
 
     @GetMapping(path = "/")
-    public ResponseEntity<List<UsuarioDTO>> findAll() {
-        List<UsuarioDTO> dtoList = usuarioService.findAll();
+    public ResponseEntity<Set<UsuarioDTO>> findAll() {
+        Set<UsuarioDTO> dtoList = usuarioService.findAll();
         return ResponseEntity.ok(dtoList);
     }
 

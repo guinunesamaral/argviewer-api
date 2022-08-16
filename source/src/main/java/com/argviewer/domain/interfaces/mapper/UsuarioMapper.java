@@ -4,7 +4,7 @@ import com.argviewer.domain.model.dtos.UsuarioDTO;
 import com.argviewer.domain.model.entities.Usuario;
 import org.mapstruct.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = EloMapper.class)
 public interface UsuarioMapper {
@@ -18,7 +18,7 @@ public interface UsuarioMapper {
 
     @Named("UsuariosToDtoList")
     @IterableMapping(qualifiedByName = "UsuarioToDTO")
-    List<UsuarioDTO> usuariosToDtoList(List<Usuario> usuarios);
+    Set<UsuarioDTO> usuariosToDtoList(Set<Usuario> usuarios);
 
     @Named("DtoToUsuario")
     @Mapping(target = "dataCriacao", ignore = true)

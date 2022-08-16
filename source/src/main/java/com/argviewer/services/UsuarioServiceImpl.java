@@ -10,7 +10,7 @@ import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Service
 public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.services.UsuarioService {
@@ -60,8 +60,8 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
     }
 
     @Override
-    public List<UsuarioDTO> findAll() {
-        return usuarioMapper.usuariosToDtoList(usuarioRepository.findAll());
+    public Set<UsuarioDTO> findAll() {
+        return usuarioMapper.usuariosToDtoList(Set.copyOf(usuarioRepository.findAll()));
     }
 
     @Override

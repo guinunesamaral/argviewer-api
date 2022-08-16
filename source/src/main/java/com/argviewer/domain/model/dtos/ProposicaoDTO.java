@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,14 +20,14 @@ public class ProposicaoDTO {
     private int relevancia;
     private int veracidade;
     private UsuarioDTO usuario;
-    private List<UsuarioDTO> seguidores;
-    private List<ProposicaoDTO> respostas;
+    private Set<UsuarioDTO> seguidores;
+    private Set<ProposicaoDTO> respostas;
 
     public ProposicaoDTO(String texto, String fonte, int idUsuario) {
         this.texto = texto;
         this.fonte = fonte;
         this.usuario = new UsuarioDTO(idUsuario, null, null, null, null);
-        this.seguidores = Collections.emptyList();
-        this.respostas = Collections.emptyList();
+        this.seguidores = Collections.emptySet();
+        this.respostas = Collections.emptySet();
     }
 }

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -12,12 +12,12 @@ public class EloDTO {
     private int id;
     private String titulo;
     private String descricao;
-    private List<UsuarioDTO> usuarios;
+    private Set<UsuarioDTO> usuarios;
 
     public EloDTO(int id, String titulo, String descricao) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
-        this.usuarios = Collections.emptyList();
+        this.usuarios = Collections.emptySet();
     }
 }

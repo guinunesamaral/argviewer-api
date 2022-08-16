@@ -1,11 +1,10 @@
 package com.argviewer.domain.model.entities;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity(name = "elo")
 @Table(uniqueConstraints = @UniqueConstraint(name = "UQ_Elo_Titulo", columnNames = "titulo"))
@@ -24,7 +23,7 @@ public class Elo {
     private String descricao;
 
     @OneToMany(mappedBy = "elo")
-    private List<Usuario> usuarios;
+    private Set<Usuario> usuarios;
 
     public Elo() {
     }

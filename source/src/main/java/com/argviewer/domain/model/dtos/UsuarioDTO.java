@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,10 +21,10 @@ public class UsuarioDTO {
 	private boolean isAnonimo;
 	private boolean isModerador;
 	private EloDTO elo;
-	private List<ProposicaoDTO> proposicoesCriadas;
-	private List<ProposicaoDTO> proposicoesSeguindo;
-	private List<UsuarioDTO> seguidores;
-	private List<UsuarioDTO> seguindo;
+	private Set<ProposicaoDTO> proposicoesCriadas;
+	private Set<ProposicaoDTO> proposicoesSeguindo;
+	private Set<UsuarioDTO> seguidores;
+	private Set<UsuarioDTO> seguindo;
 
 	public UsuarioDTO(int id, String nome, String nickname, String email, String senha) {
 		this.id = id;

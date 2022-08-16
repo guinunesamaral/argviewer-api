@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Entity(name = "proposicao")
 @Table(uniqueConstraints = @UniqueConstraint(name = "UQ_Proposicao_Texto", columnNames = "texto"))
@@ -44,18 +44,22 @@ public class Proposicao {
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Proposicao_Usuario"))
     private Usuario usuario;
 
-    @ManyToMany(mappedBy = "proposicoesSeguindo")
-    private List<Usuario> seguidores;
+    @ManyToMany
+    @JoinTable(
+            name = "proposicao_seguidor",
+            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoSeguidor_Proposicao")),
+            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_ProposicaoSeguidor_Seguidor")))
+    private Set<Usuario> seguidores;
 
     @ManyToMany
     @JoinTable(
-            name = "proposicao_tem_resposta",
-            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTemResposta_Proposicao")),
-            inverseJoinColumns = @JoinColumn(name = "resposta_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTemResposta_Resposta")))
-    private List<Proposicao> respostas;
+            name = "proposicao_resposta",
+            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoResposta_Proposicao")),
+            inverseJoinColumns = @JoinColumn(name = "resposta_id", foreignKey = @ForeignKey(name = "FK_ProposicaoResposta_Resposta")))
+    private Set<Proposicao> respostas;
 
     @ManyToMany(mappedBy = "respostas")
-    private List<Proposicao> proposicoes;
+    private Set<Proposicao> proposicoes;
 
     public Proposicao() {
     }

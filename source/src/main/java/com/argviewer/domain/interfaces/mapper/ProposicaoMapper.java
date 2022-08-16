@@ -6,7 +6,7 @@ import com.argviewer.domain.model.entities.Proposicao;
 import com.argviewer.domain.model.entities.Usuario;
 import org.mapstruct.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = UsuarioMapper.class)
 public interface ProposicaoMapper {
@@ -17,10 +17,10 @@ public interface ProposicaoMapper {
     ProposicaoDTO proposicaoToDTO(Proposicao proposicao);
 
     @IterableMapping(qualifiedByName = "UsuarioToDTO")
-    List<UsuarioDTO> seguidoresToDtoList(List<Usuario> usuarios);
+    Set<UsuarioDTO> seguidoresToDtoList(Set<Usuario> usuarios);
 
     @IterableMapping(qualifiedByName = "ProposicaoToDTO")
-    List<ProposicaoDTO> proposicoesToDtoList(List<Proposicao> proposicoes);
+    Set<ProposicaoDTO> proposicoesToDtoList(Set<Proposicao> proposicoes);
 
     @Mapping(target = "dataCriacao", ignore = true)
     @Mapping(target = "usuario", qualifiedByName = "DtoToUsuario")
