@@ -1,45 +1,54 @@
 package com.argviewer.api.controllers;
 
-import com.argviewer.domain.interfaces.business.UsuarioService;
-import com.argviewer.domain.model.requests.user.SaveRequest;
-import com.argviewer.domain.model.responses.user.SaveResponse;
+import com.argviewer.domain.interfaces.services.UsuarioService;
+import com.argviewer.domain.model.dtos.UsuarioDTO;
+import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.argviewer.domain.model.responses.user.FindAllResponse;
-import com.argviewer.domain.model.responses.user.FindByIdResponse;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/Usuario")
 public class UsuarioController {
 
     @Autowired
-    private UsuarioService usuarioBusiness;
+    private UsuarioService usuarioService;
 
-    @PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SaveResponse> save(@RequestBody SaveRequest request) {
-        return ResponseEntity.ok(
-                new SaveResponse(this.usuarioBusiness.save(request.usuario()))
-        );
+    @PostMapping(path = "/")
+    public ResponseEntity<Integer> create(@RequestBody UsuarioDTO dto) {
+        int id = usuarioService.create(dto);
+        return ResponseEntity.ok(id);
     }
 
-    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FindByIdResponse> findById(@PathVariable int id) {
-        return ResponseEntity.ok(
-                new FindByIdResponse(
-                        usuarioBusiness.findById(id)));
+    @PutMapping(path = "/")
+    public ResponseEntity<Void> update(@RequestBody UsuarioDTO dto) throws IllegalOperationException {
+        usuarioService.update(dto);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/")
-    public ResponseEntity<FindAllResponse> findAll() {
-        return ResponseEntity.ok(
-                new FindAllResponse(usuarioBusiness.findAll()));
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<UsuarioDTO> findById(@PathVariable int id) {
+        UsuarioDTO dto = usuarioService.findById(id);
+        return ResponseEntity.ok(dto);
     }
 
-    @GetMapping(path = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/")
+    public ResponseEntity<Set<UsuarioDTO>> findAll() {
+        Set<UsuarioDTO> dtoList = usuarioService.findAll();
+        return ResponseEntity.ok(dtoList);
+    }
+
+    @GetMapping(path = "/count")
     public ResponseEntity<Long> count() {
-        return ResponseEntity.ok(usuarioBusiness.count());
+        long qtdUsuarios = usuarioService.count();
+        return ResponseEntity.ok(qtdUsuarios);
+    }
+
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<Void> inactivate(@PathVariable int id) {
+        usuarioService.inactivate(id);
+        return ResponseEntity.ok().build();
     }
 }

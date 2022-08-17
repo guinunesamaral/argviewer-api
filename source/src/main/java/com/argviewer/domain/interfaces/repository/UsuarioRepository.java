@@ -1,7 +1,10 @@
 package com.argviewer.domain.interfaces.repository;
 
 import com.argviewer.domain.model.entities.Usuario;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UsuarioRepository extends CrudRepository<Usuario, Integer> {
+import java.util.Optional;
+
+public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
+    Optional<Usuario> findByEmail(String email);
 }

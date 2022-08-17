@@ -2,20 +2,25 @@ package com.argviewer.domain.model.entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity
+@Entity(name = "usuario")
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "UQ_Usuario_Email", columnNames = "email"),
+        @UniqueConstraint(name = "UQ_Usuario_Nickname", columnNames = "nickname")
+})
 @Getter
 @Setter
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(nullable = false, length = 100)
     private String nome;
@@ -23,64 +28,62 @@ public class Usuario {
     @Column(nullable = false, length = 30)
     private String nickname;
 
-    @Email
-    @Column(unique = true, nullable = false, length = 200)
+    @Column(nullable = false, length = 200)
     private String email;
 
     @Column(nullable = false, length = 128)
     private String senha;
 
-    @Column(nullable = false)
-    private Date dataCriacao;
+    @Column(updatable = false)
+    @CreatedDate
+    private LocalDateTime dataCriacao = LocalDateTime.now();
 
-    private Date dataAlteracao;
+    @LastModifiedDate
+    private LocalDateTime dataAlteracao;
 
     @Lob
-    @Column(columnDefinition = "mediumblob")
+    @Column(columnDefinition = "MEDIUMBLOB")
     private byte[] foto;
 
     @Column(nullable = false)
-    private Boolean isAnonimo;
+    private boolean isActive = true;
 
     @Column(nullable = false)
-    private Boolean isModerador;
+    private boolean isAnonimo;
+
+    @Column(nullable = false)
+    private boolean isModerador;
 
     @ManyToOne
-    @JoinColumn(name = "elo_id", nullable = false)
+    @JoinColumn(name = "elo_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Usuario_Elo"))
     private Elo elo;
-
-    @OneToMany(mappedBy = "usuario")
-    private Set<Historico> historicos;
 
     @OneToMany(mappedBy = "usuario")
     private Set<Proposicao> proposicoesCriadas;
 
-    @ManyToMany()
-    @JoinTable(
-            name = "usuario_segue_proposicao",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "proposicao_id"))
+    @ManyToMany(mappedBy = "seguidores")
     private Set<Proposicao> proposicoesSeguindo;
 
-    @ManyToMany()
+    @ManyToMany
     @JoinTable(
-            name = "usuario_tem_seguidor",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "seguidor_id"))
+            name = "usuario_seguidor",
+            joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_UsuarioSeguidor_Usuario")),
+            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_UsuarioSeguidor_Seguidor")))
     private Set<Usuario> seguidores;
 
     @ManyToMany(mappedBy = "seguidores")
     private Set<Usuario> seguindo;
 
-    public Usuario(String nome, String nickname, String email, String senha, Date dataCriacao, byte[] foto, Boolean isAnonimo, Boolean isModerador, Elo elo) {
+    public Usuario() {
+    }
+
+    public Usuario(int id, String nome, String nickname, String email, String senha, byte[] foto, Elo elo) {
+        this.id = id;
         this.nome = nome;
         this.nickname = nickname;
         this.email = email;
         this.senha = senha;
-        this.dataCriacao = dataCriacao;
         this.foto = foto;
-        this.isAnonimo = isAnonimo;
-        this.isModerador = isModerador;
         this.elo = elo;
     }
 }

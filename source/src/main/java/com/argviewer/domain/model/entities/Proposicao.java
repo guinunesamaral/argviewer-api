@@ -4,17 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity
+@Entity(name = "proposicao")
+@Table(uniqueConstraints = @UniqueConstraint(name = "UQ_Proposicao_Texto", columnNames = "texto"))
 @Getter
 @Setter
 public class Proposicao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(nullable = false, length = 400)
     private String texto;
@@ -23,36 +24,50 @@ public class Proposicao {
     private String fonte;
 
     @Column(nullable = false)
-    private Date dataCriacao;
+    private LocalDateTime dataCriacao = LocalDateTime.now();
 
-    private Date dataAlteracao;
-
-    @Column(nullable = false)
-    private Integer qtdUpvotes;
+    private LocalDateTime dataAlteracao;
 
     @Column(nullable = false)
-    private Integer qtdDownvotes;
+    private int qtdUpvotes;
 
     @Column(nullable = false)
-    private Integer relevancia;
+    private int qtdDownvotes;
 
     @Column(nullable = false)
-    private Integer veracidade;
+    private int relevancia;
+
+    @Column(nullable = false)
+    private int veracidade;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Proposicao_Usuario"))
     private Usuario usuario;
 
-    @ManyToMany(mappedBy = "proposicoesSeguindo")
+    @ManyToMany
+    @JoinTable(
+            name = "proposicao_seguidor",
+            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoSeguidor_Proposicao")),
+            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_ProposicaoSeguidor_Seguidor")))
     private Set<Usuario> seguidores;
 
     @ManyToMany
     @JoinTable(
-            name = "proposicao_tem_resposta",
-            joinColumns = @JoinColumn(name = "proposicao_id"),
-            inverseJoinColumns = @JoinColumn(name = "resposta_id"))
+            name = "proposicao_resposta",
+            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoResposta_Proposicao")),
+            inverseJoinColumns = @JoinColumn(name = "resposta_id", foreignKey = @ForeignKey(name = "FK_ProposicaoResposta_Resposta")))
     private Set<Proposicao> respostas;
 
     @ManyToMany(mappedBy = "respostas")
     private Set<Proposicao> proposicoes;
+
+    public Proposicao() {
+    }
+
+    public Proposicao(int id, String texto, String fonte, Usuario usuario) {
+        this.id = id;
+        this.texto = texto;
+        this.fonte = fonte;
+        this.usuario = usuario;
+    }
 }
