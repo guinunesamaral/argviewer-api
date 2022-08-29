@@ -1,24 +1,24 @@
 package com.argviewer.domain.interfaces.services;
 
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.exceptions.IllegalOperationException;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface ProposicaoService {
 
+    Set<ProposicaoDTO> find(Integer idUsuario);
+
+    Optional<ProposicaoDTO> findById(int id);
+
     int create(ProposicaoDTO dto);
-
-    void addResposta(int idProposicao, int idResposta);
-
-    void addSeguidor(int idProposicao, int idSeguidor);
 
     void update(ProposicaoDTO dto);
 
-    ProposicaoDTO findById(int id);
+    void addAnswer(int idProposicao, int idResposta);
 
-    Set<ProposicaoDTO> findAll(Integer idUsuario);
-
-    long count(Integer idUsuario);
+    boolean addRemoveFollower(int idProposicao, int idSeguidor) throws IllegalOperationException;
 
     void deleteById(int id);
 }

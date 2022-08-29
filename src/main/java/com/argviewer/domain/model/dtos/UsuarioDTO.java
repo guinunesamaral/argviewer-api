@@ -26,11 +26,10 @@ public class UsuarioDTO {
 	private Set<UsuarioDTO> seguidores;
 	private Set<UsuarioDTO> seguindo;
 
-	public UsuarioDTO(int id, String nome, String nickname, String email, String senha) {
+	public UsuarioDTO() {
+	}
+
+	public UsuarioDTO(int id) {
 		this.id = id;
-		this.nome = nome;
-		this.nickname = nickname;
-		this.email = email;
-		this.senha = senha;
 	}
 }

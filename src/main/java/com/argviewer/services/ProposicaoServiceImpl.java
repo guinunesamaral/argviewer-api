@@ -1,23 +1,27 @@
 package com.argviewer.services;
 
-import com.argviewer.domain.interfaces.mapper.ProposicaoMapper;
-import com.argviewer.domain.interfaces.repository.ProposicaoRepository;
-import com.argviewer.domain.interfaces.repository.UsuarioRepository;
+import com.argviewer.domain.interfaces.mappers.ProposicaoMapper;
+import com.argviewer.domain.interfaces.repositories.ProposicaoRepository;
+import com.argviewer.domain.interfaces.repositories.UsuarioRepository;
 import com.argviewer.domain.interfaces.services.ProposicaoService;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.entities.Proposicao;
 import com.argviewer.domain.model.entities.Usuario;
 import com.argviewer.domain.model.exceptions.EntityNotFoundException;
+import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -35,20 +39,51 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         this.proposicaoMapper = proposicaoMapper;
     }
 
+    static Specification<Proposicao> proposicaoContains(int usuarioId) {
+        return (proposicao, cq, cb) -> cb.equal(proposicao.get("usuarioId"), usuarioId);
+    }
+
+    @Override
+    public Set<ProposicaoDTO> find(Integer idUsuario) {
+        Set<Proposicao> proposicaoSet;
+
+        if (idUsuario != null)
+            proposicaoSet = Set.copyOf(proposicaoRepository.findAll(Specification.where(proposicaoContains(idUsuario))));
+        else
+            proposicaoSet = Set.copyOf(proposicaoRepository.findAll());
+
+        return proposicaoMapper.proposicoesToDtoSet(proposicaoSet);
+    }
+
+    @Override
+    public Optional<ProposicaoDTO> findById(int id) {
+        Optional<Proposicao> proposicao = proposicaoRepository.findById(id);
+        return proposicao.map(proposicaoMapper::proposicaoToDto);
+    }
+
+    @Override
+    public int create(ProposicaoDTO dto) {
+        Proposicao proposicao = proposicaoMapper.dtoToProposicao(dto);
+        return proposicaoRepository.save(proposicao).getId();
+    }
+
+    @Override
+    public void update(ProposicaoDTO dto) {
+        Proposicao proposicao = proposicaoRepository
+                .findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+        proposicaoMapper.dtoToProposicao(dto, proposicao);
+        proposicao.setDataAlteracao(LocalDateTime.now());
+        proposicaoRepository.save(proposicao);
+    }
+
     private String resolvePythonScriptPath(String filename) {
         File file = new File("src/main/resources/" + filename);
         return file.getAbsolutePath();
     }
 
     @Override
-    public int create(ProposicaoDTO dto) {
-        Proposicao proposicao = proposicaoMapper.dtoToProposicao(dto);
-
-        return proposicaoRepository.save(proposicao).getId();
-    }
-
-    @Override
-    public void addResposta(int idProposicao, int idResposta) {
+    public void addAnswer(int idProposicao, int idResposta) {
         Proposicao proposicao = proposicaoRepository
                 .findById(idProposicao)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
@@ -82,7 +117,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public void addSeguidor(int idProposicao, int idSeguidor) {
+    public boolean addRemoveFollower(int idProposicao, int idSeguidor) throws IllegalOperationException {
         Proposicao proposicao = proposicaoRepository
                 .findById(idProposicao)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
@@ -91,42 +126,14 @@ public class ProposicaoServiceImpl implements ProposicaoService {
                 .findById(idSeguidor)
                 .orElseThrow(() -> new EntityNotFoundException("Seguidor não encontrada."));
 
-        if (!proposicao.getSeguidores().contains(seguidor))
-            proposicao.getSeguidores().add(seguidor);
-
+        if (proposicao.getSeguidores().contains(seguidor)) {
+            proposicao.getSeguidores().remove(seguidor);
+            proposicaoRepository.save(proposicao);
+            return false;
+        }
+        proposicao.getSeguidores().add(seguidor);
         proposicaoRepository.save(proposicao);
-    }
-
-    @Override
-    public void update(ProposicaoDTO dto) {
-        Proposicao proposicao = proposicaoRepository
-                .findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
-        proposicaoMapper.dtoToProposicao(dto, proposicao);
-        proposicaoRepository.save(proposicao);
-    }
-
-    @Override
-    public ProposicaoDTO findById(int id) {
-        Proposicao proposicao = proposicaoRepository
-                .findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
-        return proposicaoMapper.proposicaoToDTO(proposicao);
-    }
-
-    @Override
-    public Set<ProposicaoDTO> findAll(Integer idUsuario) {
-        Set<Proposicao> proposicoes = idUsuario == null
-                ? Set.copyOf(proposicaoRepository.findAll())
-                : proposicaoRepository.findByIdUsuario(idUsuario);
-        return proposicaoMapper.proposicoesToDtoList(proposicoes);
-    }
-
-    @Override
-    public long count(Integer idUsuario) {
-        return idUsuario == null
-                ? proposicaoRepository.count()
-                : proposicaoRepository.countByIdUsuario(idUsuario);
+        return true;
     }
 
     @Override

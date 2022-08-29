@@ -1,4 +1,4 @@
-package com.argviewer.domain.interfaces.mapper;
+package com.argviewer.domain.interfaces.mappers;
 
 import com.argviewer.domain.model.dtos.EloDTO;
 import com.argviewer.domain.model.entities.Elo;
@@ -6,7 +6,11 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface EloMapper {
-    @Named("EloToDTO")
+    @Named("EloToDto")
     @Mapping(target = "usuarios", ignore = true)
-    EloDTO eloToDTO(Elo elo);
+    EloDTO eloToDto(Elo elo);
+
+    @Named("DtoToElo")
+    @Mapping(target = "usuarios", ignore = true)
+    Elo dtoToElo(EloDTO dto);
 }

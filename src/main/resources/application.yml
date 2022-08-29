@@ -10,8 +10,16 @@ localhost:
 
 server:
   port: 9000
+  ssl:
+    key-store-type: PKCS12
+    key-store: classpath:keystore/argviewer.p12
+    key-store-password: password
+    key-alias: argviewer
+  ssl-enabled: true
 
-debug: true
+trust:
+  store: classpath:keystore/argviewer.p12
+  store.password: password
 
 springdoc:
   api-docs:
@@ -25,20 +33,11 @@ spring:
   jpa:
     show-sql: true
     defer-datasource-initialization: true
-  properties:
     hibernate:
-      format_sql: true
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
   output:
     ansi:
       enabled: always
-
-logging:
-    level:
-      org:
-        hibernate:
-          SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE

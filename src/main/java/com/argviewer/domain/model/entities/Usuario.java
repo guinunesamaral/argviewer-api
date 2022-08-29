@@ -9,13 +9,13 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity(name = "usuario")
+@Getter
+@Setter
 @Table(uniqueConstraints = {
         @UniqueConstraint(name = "UQ_Usuario_Email", columnNames = "email"),
         @UniqueConstraint(name = "UQ_Usuario_Nickname", columnNames = "nickname")
 })
-@Getter
-@Setter
+@Entity
 public class Usuario {
 
     @Id
@@ -46,7 +46,7 @@ public class Usuario {
     private byte[] foto;
 
     @Column(nullable = false)
-    private boolean isActive = true;
+    private boolean isActive;
 
     @Column(nullable = false)
     private boolean isAnonimo;

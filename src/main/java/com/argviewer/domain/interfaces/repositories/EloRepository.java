@@ -1,4 +1,4 @@
-package com.argviewer.domain.interfaces.repository;
+package com.argviewer.domain.interfaces.repositories;
 
 import com.argviewer.domain.model.entities.Elo;
 import org.springframework.data.repository.CrudRepository;

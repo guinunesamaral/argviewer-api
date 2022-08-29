@@ -8,23 +8,16 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class EloDTO {
+public class TagDTO {
     private int id;
     private String titulo;
     private String descricao;
-    private Set<UsuarioDTO> usuarios;
+    private Set<ProposicaoDTO> proposicoes;
 
-    public EloDTO() {
-    }
-
-    public EloDTO(int id) {
-        this.id = id;
-    }
-
-    public EloDTO(int id, String titulo, String descricao) {
+    public TagDTO(int id, String titulo, String descricao) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
-        this.usuarios = Collections.emptySet();
+        this.proposicoes = Collections.emptySet();
     }
 }

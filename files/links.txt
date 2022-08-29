@@ -1,2 +1,2 @@
-http://localhost:9000/api-docs
-http://localhost:9000/swagger-ui/index.html
+https://localhost:9000/api-docs
+https://localhost:9000/swagger-ui/index.html

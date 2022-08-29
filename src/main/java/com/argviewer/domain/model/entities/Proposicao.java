@@ -7,9 +7,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity(name = "proposicao")
 @Getter
 @Setter
+@Entity
 public class Proposicao {
 
     @Id
@@ -23,7 +23,7 @@ public class Proposicao {
     private String fonte;
 
     @Column(nullable = false)
-    private LocalDateTime dataCriacao = LocalDateTime.now();
+    private LocalDateTime dataCriacao;
 
     private LocalDateTime dataAlteracao;
 
@@ -42,6 +42,13 @@ public class Proposicao {
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Proposicao_Usuario"))
     private Usuario usuario;
+
+    @ManyToMany
+    @JoinTable(
+            name = "proposicao_tag",
+            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTag_Proposicao")),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTag_Tag")))
+    private Set<Tag> tags;
 
     @ManyToMany
     @JoinTable(

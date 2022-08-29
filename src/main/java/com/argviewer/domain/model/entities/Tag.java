@@ -8,10 +8,8 @@ import java.util.Set;
 
 @Getter
 @Setter
-@Table(uniqueConstraints = @UniqueConstraint(name = "UQ_Elo_Titulo", columnNames = "titulo"))
 @Entity
-public class Elo {
-
+public class Tag {
     @Id
     private int id;
 
@@ -21,13 +19,13 @@ public class Elo {
     @Column(nullable = false, length = 300)
     private String descricao;
 
-    @OneToMany(mappedBy = "elo")
-    private Set<Usuario> usuarios;
+    @ManyToMany(mappedBy = "tags")
+    private Set<Proposicao> proposicoes;
 
-    public Elo() {
+    public Tag() {
     }
 
-    public Elo(int id, String titulo, String descricao) {
+    public Tag(int id, String titulo, String descricao) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;

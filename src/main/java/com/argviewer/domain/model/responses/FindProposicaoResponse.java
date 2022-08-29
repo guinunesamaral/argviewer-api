@@ -1,14 +1,15 @@
-package com.argviewer.domain.model.dtos;
+package com.argviewer.domain.model.responses;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Getter
 @Setter
-public class ProposicaoDTO {
+@NoArgsConstructor
+public class FindProposicaoResponse {
     private int id;
     private String texto;
     private String fonte;
@@ -18,14 +19,5 @@ public class ProposicaoDTO {
     private int qtdDownvotes;
     private int relevancia;
     private int veracidade;
-    private UsuarioDTO usuario;
-    private Set<UsuarioDTO> seguidores;
-    private Set<ProposicaoDTO> respostas;
-
-    public ProposicaoDTO() {
-    }
-
-    public ProposicaoDTO(int id) {
-        this.id = id;
-    }
+    private FindUsuarioResponse usuario;
 }
