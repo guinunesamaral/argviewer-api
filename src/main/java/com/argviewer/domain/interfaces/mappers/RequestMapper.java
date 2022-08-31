@@ -30,7 +30,7 @@ public interface RequestMapper {
     UsuarioDTO updateUsuarioRequestToDto(UpdateUsuarioRequest request);
 
     @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId))")
+    @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
     ProposicaoDTO createProposicaoRequestToDto(CreateProposicaoRequest request);
 
     @Mapping(target = "dataAlteracao", expression = "java(LocalDateTime.now())")
