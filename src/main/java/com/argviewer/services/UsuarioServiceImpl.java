@@ -69,9 +69,25 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
     }
 
     @Override
-    public Optional<UsuarioDTO> findById(int id) {
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
+    public Optional<UsuarioDTO> findById(int usuarioId) {
+        Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
         return usuario.map(usuarioMapper::usuarioToDto);
+    }
+
+    @Override
+    public Set<UsuarioDTO> findSeguidores(int usuarioId) {
+        Usuario usuario = usuarioRepository
+                .findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+        return usuarioMapper.usuariosToDtoSet(usuario.getSeguidores());
+    }
+
+    @Override
+    public Set<UsuarioDTO> findSeguindo(int usuarioId) {
+        Usuario usuario = usuarioRepository
+                .findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+        return usuarioMapper.usuariosToDtoSet(usuario.getSeguindo());
     }
 
     @Override
@@ -104,9 +120,9 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
     }
 
     @Override
-    public void inactivate(int id) throws IllegalOperationException {
+    public void inactivate(int usuarioId) throws IllegalOperationException {
         Usuario usuario = usuarioRepository
-                .findById(id)
+                .findById(usuarioId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
 
         if (!usuario.isActive())
@@ -117,16 +133,16 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
     }
 
     @Override
-    public boolean addRemoveFollower(int id, int followerId) throws IllegalOperationException {
-        if (id == followerId)
+    public boolean saveSeguidores(int usuarioId, int seguidorId) throws IllegalOperationException {
+        if (usuarioId == seguidorId)
             throw new IllegalOperationException("Usuário não pode seguir ele mesmo.");
 
         Usuario usuario = usuarioRepository
-                .findById(id)
+                .findById(usuarioId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
 
         Usuario seguidor = usuarioRepository
-                .findById(followerId)
+                .findById(seguidorId)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
 
         if (!usuario.isActive())
@@ -135,23 +151,23 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
         if (!seguidor.isActive())
             throw new IllegalOperationException("Pessoa está inativa.");
 
-        if (usuario.getSeguidores().contains(seguidor)) {
-            usuario.getSeguidores().remove(seguidor);
+        if (!usuario.getSeguidores().contains(seguidor)) {
+            usuario.getSeguidores().add(seguidor);
             usuarioRepository.save(usuario);
-            return false;
+            return true;
         }
-        usuario.getSeguidores().add(seguidor);
+        usuario.getSeguidores().remove(seguidor);
         usuarioRepository.save(usuario);
-        return true;
+        return false;
     }
 
     @Override
-    public boolean addRemoveFollowing(int id, int followingId) throws IllegalOperationException {
-        if (id == followingId)
+    public boolean saveSeguindo(int usuarioId, int followingId) throws IllegalOperationException {
+        if (usuarioId == followingId)
             throw new IllegalOperationException("Usuário não pode seguir ele mesmo.");
 
         Usuario usuario = usuarioRepository
-                .findById(id)
+                .findById(usuarioId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
 
         Usuario seguindo = usuarioRepository
@@ -164,13 +180,13 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
         if (!seguindo.isActive())
             throw new IllegalOperationException("Pessoa está inativa.");
 
-        if (seguindo.getSeguidores().contains(usuario)) {
-            seguindo.getSeguidores().remove(usuario);
+        if (!seguindo.getSeguidores().contains(usuario)) {
+            seguindo.getSeguidores().add(usuario);
             usuarioRepository.save(seguindo);
-            return false;
+            return true;
         }
-        seguindo.getSeguidores().add(usuario);
+        seguindo.getSeguidores().remove(usuario);
         usuarioRepository.save(seguindo);
-        return true;
+        return false;
     }
 }

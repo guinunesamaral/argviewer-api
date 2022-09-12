@@ -8,17 +8,21 @@ import java.util.Set;
 
 public interface ProposicaoService {
 
-    Set<ProposicaoDTO> find(Integer idUsuario);
+    Set<ProposicaoDTO> find(Integer usuarioId, Integer tagId);
 
-    Optional<ProposicaoDTO> findById(int id);
+    Optional<ProposicaoDTO> findById(int proposicaoId);
+
+    Set<ProposicaoDTO> findReplicas(int proposicaoId);
 
     int create(ProposicaoDTO dto);
 
     void update(ProposicaoDTO dto);
 
-    void addAnswer(int idProposicao, int idResposta);
+    boolean saveReplicas(int proposicaoId, int replicaId) throws IllegalOperationException;
 
-    boolean addRemoveFollower(int idProposicao, int idSeguidor) throws IllegalOperationException;
+    void addSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException;
 
-    void deleteById(int id);
+    void removeSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException;
+
+    void deleteById(int proposicaoId);
 }

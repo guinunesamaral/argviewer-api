@@ -19,8 +19,9 @@ public class ProposicaoDTO {
     private int relevancia;
     private int veracidade;
     private UsuarioDTO usuario;
+    private Set<TagDTO> tags;
     private Set<UsuarioDTO> seguidores;
-    private Set<ProposicaoDTO> respostas;
+    private Set<ProposicaoDTO> replicas;
 
     public ProposicaoDTO() {
     }

@@ -13,11 +13,12 @@ public class TagDTO {
     private String titulo;
     private String descricao;
     private Set<ProposicaoDTO> proposicoes;
+    private Set<TagDTO> tags;
 
-    public TagDTO(int id, String titulo, String descricao) {
+    public TagDTO() {
+    }
+
+    public TagDTO(int id) {
         this.id = id;
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.proposicoes = Collections.emptySet();
     }
 }

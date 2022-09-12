@@ -2,11 +2,9 @@ package com.argviewer.domain.interfaces.mappers;
 
 import com.argviewer.domain.model.dtos.EloDTO;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.dtos.TagDTO;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
-import com.argviewer.domain.model.responses.CreateUsuarioResponse;
-import com.argviewer.domain.model.responses.FindEloResponse;
-import com.argviewer.domain.model.responses.FindProposicaoResponse;
-import com.argviewer.domain.model.responses.FindUsuarioResponse;
+import com.argviewer.domain.model.responses.*;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,15 +26,23 @@ public interface ResponseMapper {
     @Named("DtoToFindEloResponse")
     FindEloResponse dtoToFindEloResponse(EloDTO dto);
 
-    @Named("DtoSetToFindUsuarioResponseSet")
+    @Named("DtosToFindUsuarioResponseSet")
     @IterableMapping(qualifiedByName = "DtoToFindUsuarioResponse")
-    Set<FindUsuarioResponse> dtoSetToFindUsuarioResponseSet(Set<UsuarioDTO> dtoSet);
+    Set<FindUsuarioResponse> dtosToFindUsuarioResponseSet(Set<UsuarioDTO> dtos);
+
+    @Named("DtoToFindTagResponse")
+    FindTagResponse dtoToFindTagResponse(TagDTO dto);
+
+    @Named("DtosToFindTagResponseSet")
+    @IterableMapping(qualifiedByName = "DtoToFindTagResponse")
+    Set<FindTagResponse> dtoSetToFindTagResponseSet(Set<TagDTO> dtos);
 
     @Named("DtoToFindProposicaoResponse")
-    @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "usuario", qualifiedByName = "DtoToFindUsuarioResponse")
+    @Mapping(target = "tags", qualifiedByName = "DtosToFindTagResponseSet")
     FindProposicaoResponse dtoToFindProposicaoResponse(ProposicaoDTO dto);
 
-    @Named("DtoSetToFindProposicaoResponseSet")
+    @Named("DtosToFindProposicaoResponseSet")
     @IterableMapping(qualifiedByName = "DtoToFindProposicaoResponse")
-    Set<FindProposicaoResponse> dtoSetToFindProposicaoResponseSet(Set<ProposicaoDTO> dtoSet);
+    Set<FindProposicaoResponse> dtosToFindProposicaoResponseSet(Set<ProposicaoDTO> dtos);
 }

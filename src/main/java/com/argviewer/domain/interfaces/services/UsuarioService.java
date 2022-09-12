@@ -11,15 +11,19 @@ public interface UsuarioService {
 
     Set<UsuarioDTO> find(String value);
 
-    Optional<UsuarioDTO> findById(int id);
+    Optional<UsuarioDTO> findById(int usuarioId);
+
+    Set<UsuarioDTO> findSeguidores(int usuarioId);
+
+    Set<UsuarioDTO> findSeguindo(int usuarioId);
 
     int create(UsuarioDTO dto);
 
     void update(UsuarioDTO dto) throws IllegalOperationException;
 
-    void inactivate(int id) throws IllegalOperationException;
+    void inactivate(int usuarioId) throws IllegalOperationException;
 
-    boolean addRemoveFollower(int id, int followerId) throws IllegalOperationException;
+    boolean saveSeguidores(int usuarioId, int seguidorId) throws IllegalOperationException;
 
-    boolean addRemoveFollowing(int id, int followingId) throws IllegalOperationException;
+    boolean saveSeguindo(int usuarioId, int seguindoId) throws IllegalOperationException;
 }

@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ProposicaoRepository extends JpaRepository<Proposicao, Integer>, JpaSpecificationExecutor<Proposicao> {
-    Proposicao findByTexto(String texto);
 }

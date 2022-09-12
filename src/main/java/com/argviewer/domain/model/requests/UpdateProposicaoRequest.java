@@ -15,4 +15,5 @@ public class UpdateProposicaoRequest {
     private int qtdDownvotes;
     private int relevancia;
     private int veracidade;
+    private int[] tagIds;
 }

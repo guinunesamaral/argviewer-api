@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,4 +21,5 @@ public class FindProposicaoResponse {
     private int relevancia;
     private int veracidade;
     private FindUsuarioResponse usuario;
+    private Set<FindTagResponse> tags;
 }

@@ -1,12 +1,12 @@
 heroku:
-  database: b2cf313e5c854b:f227b197@us-cdbr-east-06.cleardb.net/heroku_9e1cce48c06f67b?reconnect=true
   username: b2cf313e5c854b
   password: f227b197
+  database: ${heroku.username}:${heroku.password}@us-cdbr-east-06.cleardb.net/heroku_9e1cce48c06f67b?reconnect=true
 
 localhost:
-  database: localhost:3306/argviewer
   username: root
   password: password
+  database: ${localhost.username}:${localhost.password}@localhost:3306/argviewer
 
 server:
   port: 9000
@@ -30,9 +30,11 @@ spring:
     url: jdbc:mysql://${heroku.database}
     username: ${heroku.username}
     password: ${heroku.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
     defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.MySQL55Dialect
     hibernate:
       ddl-auto: update
     properties:

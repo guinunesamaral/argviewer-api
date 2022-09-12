@@ -59,12 +59,12 @@ public class Proposicao {
 
     @ManyToMany
     @JoinTable(
-            name = "proposicao_resposta",
-            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoResposta_Proposicao")),
-            inverseJoinColumns = @JoinColumn(name = "resposta_id", foreignKey = @ForeignKey(name = "FK_ProposicaoResposta_Resposta")))
-    private Set<Proposicao> respostas;
+            name = "proposicao_replica",
+            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoReplica_Proposicao")),
+            inverseJoinColumns = @JoinColumn(name = "replica_id", foreignKey = @ForeignKey(name = "FK_ProposicaoReplica_Replica")))
+    private Set<Proposicao> replicas;
 
-    @ManyToMany(mappedBy = "respostas")
+    @ManyToMany(mappedBy = "replicas")
     private Set<Proposicao> proposicoes;
 
     public Proposicao() {

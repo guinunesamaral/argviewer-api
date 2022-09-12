@@ -4,6 +4,7 @@ import com.argviewer.domain.interfaces.mappers.RequestMapper;
 import com.argviewer.domain.interfaces.mappers.ResponseMapper;
 import com.argviewer.domain.interfaces.services.ProposicaoService;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import com.argviewer.domain.model.requests.CreateProposicaoRequest;
 import com.argviewer.domain.model.requests.UpdateProposicaoRequest;
 import com.argviewer.domain.model.responses.FindProposicaoResponse;
@@ -31,17 +32,23 @@ public class ProposicaoController {
     }
 
     @GetMapping
-    public Set<FindProposicaoResponse> find(@RequestParam(required = false) Integer idUsuario) {
-        Set<ProposicaoDTO> dtoSet = proposicaoService.find(idUsuario);
-        return responseMapper.dtoSetToFindProposicaoResponseSet(dtoSet);
+    public Set<FindProposicaoResponse> find(@RequestParam(required = false) Integer usuarioId, @RequestParam(required = false) Integer tagId) {
+        Set<ProposicaoDTO> dtoSet = proposicaoService.find(usuarioId, tagId);
+        return responseMapper.dtosToFindProposicaoResponseSet(dtoSet);
     }
 
-    @GetMapping("/{id}")
-    public FindProposicaoResponse findById(@PathVariable int id) {
+    @GetMapping("/{proposicaoId}")
+    public FindProposicaoResponse findById(@PathVariable int proposicaoId) {
         ProposicaoDTO dto = proposicaoService
-                .findById(id)
+                .findById(proposicaoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum usuário existe para esse id."));
         return responseMapper.dtoToFindProposicaoResponse(dto);
+    }
+
+    @GetMapping("/{proposicaoId}/replicas")
+    public Set<FindProposicaoResponse> findReplicas(@PathVariable int proposicaoId) {
+        Set<ProposicaoDTO> dtoSet = proposicaoService.findReplicas(proposicaoId);
+        return responseMapper.dtosToFindProposicaoResponseSet(dtoSet);
     }
 
     @PostMapping
@@ -59,18 +66,16 @@ public class ProposicaoController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{idProposicao}/resposta")
-    public ResponseEntity<Response> addAnswer(@PathVariable int idProposicao, @RequestBody ProposicaoDTO dto) {
-        int idResposta = proposicaoService.create(dto);
-        proposicaoService.addAnswer(idProposicao, idResposta);
-        URI location = URI.create("/proposicoes/" + idResposta);
-        Response response = new Response(200, "Resposta adicionada com sucesso.", System.currentTimeMillis());
-        return ResponseEntity.created(location).body(response);
+    @PostMapping("/replica")
+    public ResponseEntity<Response> addReplica(@RequestParam int proposicaoId, @RequestParam int replicaId) throws IllegalOperationException {
+        boolean saved = proposicaoService.saveReplicas(proposicaoId, replicaId);
+        Response response = new Response(200, String.format("Replica %s com sucesso.", saved ? "adicionada" : "removida"), System.currentTimeMillis());
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Response> deleteById(@PathVariable int id) {
-        proposicaoService.deleteById(id);
+    @DeleteMapping("/{proposicaoId}")
+    public ResponseEntity<Response> deleteById(@PathVariable int proposicaoId) {
+        proposicaoService.deleteById(proposicaoId);
         Response response = new Response(200, "Proposição deletada com sucesso.", System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }

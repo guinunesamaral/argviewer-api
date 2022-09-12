@@ -2,6 +2,7 @@ package com.argviewer.domain.interfaces.mappers;
 
 import com.argviewer.domain.model.dtos.EloDTO;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.dtos.TagDTO;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
 import com.argviewer.domain.model.requests.CreateProposicaoRequest;
 import com.argviewer.domain.model.requests.CreateUsuarioRequest;
@@ -12,9 +13,11 @@ import org.mapstruct.Mapping;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", imports = {BCryptPasswordEncoder.class, LocalDateTime.class, Base64.class, EloDTO.class})
+@Mapper(componentModel = "spring", imports = {Arrays.class, Collectors.class, BCryptPasswordEncoder.class, LocalDateTime.class, Base64.class, TagDTO.class, EloDTO.class})
 public interface RequestMapper {
     @Mapping(target = "senha", expression = "java(new BCryptPasswordEncoder().encode(request.getSenha()))")
     @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
@@ -31,8 +34,10 @@ public interface RequestMapper {
 
     @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
     @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
+    @Mapping(target = "tags", expression = "java(Arrays.stream(request.getTagIds()).mapToObj(TagDTO::new).collect(Collectors.toSet()))")
     ProposicaoDTO createProposicaoRequestToDto(CreateProposicaoRequest request);
 
     @Mapping(target = "dataAlteracao", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "tags", expression = "java(Arrays.stream(request.getTagIds()).mapToObj(TagDTO::new).collect(Collectors.toSet()))")
     ProposicaoDTO updateProposicaoRequestToDto(UpdateProposicaoRequest request);
 }

@@ -18,11 +18,13 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 public class ProposicaoServiceImpl implements ProposicaoService {
@@ -39,26 +41,43 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         this.proposicaoMapper = proposicaoMapper;
     }
 
-    static Specification<Proposicao> proposicaoContains(int usuarioId) {
-        return (proposicao, cq, cb) -> cb.equal(proposicao.get("usuarioId"), usuarioId);
+    static Specification<Proposicao> belongsTo(int usuarioId) {
+        return (proposicao, cq, cb) -> cb.equal(proposicao.get("usuario").get("id"), usuarioId);
+    }
+
+    static Specification<Proposicao> containsTag(int tagId) {
+        return (proposicao, cq, cb) -> proposicao.join("tags").get("id").in(Set.of(tagId));
     }
 
     @Override
-    public Set<ProposicaoDTO> find(Integer idUsuario) {
-        Set<Proposicao> proposicaoSet;
+    public Set<ProposicaoDTO> find(Integer usuarioId, Integer tagId) {
+        Set<Proposicao> proposicoes;
 
-        if (idUsuario != null)
-            proposicaoSet = Set.copyOf(proposicaoRepository.findAll(Specification.where(proposicaoContains(idUsuario))));
+        if (usuarioId != null && tagId != null)
+            proposicoes = Set.copyOf(proposicaoRepository.findAll(
+                    where(belongsTo(usuarioId)).and(containsTag(tagId))));
+        else if (usuarioId != null)
+            proposicoes = Set.copyOf(proposicaoRepository.findAll(where(belongsTo(usuarioId))));
+        else if (tagId != null)
+            proposicoes = Set.copyOf(proposicaoRepository.findAll(containsTag(tagId)));
         else
-            proposicaoSet = Set.copyOf(proposicaoRepository.findAll());
+            proposicoes = Set.copyOf(proposicaoRepository.findAll());
 
-        return proposicaoMapper.proposicoesToDtoSet(proposicaoSet);
+        return proposicaoMapper.proposicoesToDtoSet(proposicoes);
     }
 
     @Override
     public Optional<ProposicaoDTO> findById(int id) {
         Optional<Proposicao> proposicao = proposicaoRepository.findById(id);
         return proposicao.map(proposicaoMapper::proposicaoToDto);
+    }
+
+    @Override
+    public Set<ProposicaoDTO> findReplicas(int proposicaoId) {
+        Proposicao proposicao = proposicaoRepository
+                .findById(proposicaoId)
+                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+        return proposicaoMapper.proposicoesToDtoSet(proposicao.getReplicas());
     }
 
     @Override
@@ -73,7 +92,6 @@ public class ProposicaoServiceImpl implements ProposicaoService {
                 .findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
         proposicaoMapper.dtoToProposicao(dto, proposicao);
-        proposicao.setDataAlteracao(LocalDateTime.now());
         proposicaoRepository.save(proposicao);
     }
 
@@ -82,21 +100,35 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         return file.getAbsolutePath();
     }
 
+    private String toQuote(String texto){
+        return String.format("'%s'", texto);
+    }
+
     @Override
-    public void addAnswer(int idProposicao, int idResposta) {
+    public boolean saveReplicas(int proposicaoId, int replicaId) throws IllegalOperationException {
+        if (proposicaoId == replicaId)
+            throw new IllegalOperationException("A proposição não pode ser uma replica a ela mesma.");
+
         Proposicao proposicao = proposicaoRepository
-                .findById(idProposicao)
+                .findById(proposicaoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
 
-        Proposicao resposta = proposicaoRepository
-                .findById(idResposta)
-                .orElseThrow(() -> new EntityNotFoundException("Resposta não encontrada."));
+        Proposicao replica = proposicaoRepository
+                .findById(replicaId)
+                .orElseThrow(() -> new EntityNotFoundException("Replica não encontrada."));
+
+        if (proposicao.getReplicas().contains(replica)) {
+            proposicao.getReplicas().remove(replica);
+            proposicaoRepository.save(proposicao);
+            return false;
+        }
 
         String line = String.format(
-                "py %s %s %s",
+                "py %s '%s' '%s' %s",
                 resolvePythonScriptPath("python/sentence_similarity.py"),
-                resposta.getTexto(),
-                List.of(proposicao.getTexto(), proposicao.getRespostas().stream().toList())
+                replica.getTexto(),
+                proposicao.getTexto(),
+                proposicao.getReplicas().stream().map(p -> toQuote(p.getTexto())).collect(Collectors.joining(" "))
         );
         CommandLine cmdLine = CommandLine.parse(line);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -110,34 +142,50 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         }
         List<Float> cosineScores = Arrays.stream(outputStream.toString().trim().split(", ")).map(Float::parseFloat).toList();
 
-        if (!proposicao.getRespostas().contains(resposta))
-            proposicao.getRespostas().add(resposta);
+        if (cosineScores.stream().anyMatch(score -> score > 0.90))
+            throw new IllegalOperationException("Essa replica é muito semelhante à proposição");
 
-        proposicaoRepository.save(proposicao);
-    }
-
-    @Override
-    public boolean addRemoveFollower(int idProposicao, int idSeguidor) throws IllegalOperationException {
-        Proposicao proposicao = proposicaoRepository
-                .findById(idProposicao)
-                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
-
-        Usuario seguidor = usuarioRepository
-                .findById(idSeguidor)
-                .orElseThrow(() -> new EntityNotFoundException("Seguidor não encontrada."));
-
-        if (proposicao.getSeguidores().contains(seguidor)) {
-            proposicao.getSeguidores().remove(seguidor);
-            proposicaoRepository.save(proposicao);
-            return false;
-        }
-        proposicao.getSeguidores().add(seguidor);
+        proposicao.getReplicas().add(replica);
         proposicaoRepository.save(proposicao);
         return true;
     }
 
     @Override
-    public void deleteById(int id) {
-        proposicaoRepository.deleteById(id);
+    public void addSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException {
+        Proposicao proposicao = proposicaoRepository
+                .findById(proposicaoId)
+                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+
+        Usuario seguidor = usuarioRepository
+                .findById(seguidorId)
+                .orElseThrow(() -> new EntityNotFoundException("Seguidor não encontrado."));
+
+        if (proposicao.getSeguidores().contains(seguidor))
+            throw new IllegalOperationException("Você já segue essa proposição.");
+
+        proposicao.getSeguidores().add(seguidor);
+        proposicaoRepository.save(proposicao);
+    }
+
+    @Override
+    public void removeSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException {
+        Proposicao proposicao = proposicaoRepository
+                .findById(proposicaoId)
+                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+
+        Usuario seguidor = usuarioRepository
+                .findById(seguidorId)
+                .orElseThrow(() -> new EntityNotFoundException("Seguidor não encontrada."));
+
+        if (!proposicao.getSeguidores().contains(seguidor))
+            throw new IllegalOperationException("Você não segue essa proposição.");
+
+        proposicao.getSeguidores().remove(seguidor);
+        proposicaoRepository.save(proposicao);
+    }
+
+    @Override
+    public void deleteById(int proposicaoId) {
+        proposicaoRepository.deleteById(proposicaoId);
     }
 }

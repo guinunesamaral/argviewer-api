@@ -42,15 +42,27 @@ public class UsuarioController {
     @GetMapping
     public Set<FindUsuarioResponse> find(@RequestParam(required = false) String value) {
         Set<UsuarioDTO> dtoSet = usuarioService.find(value);
-        return responseMapper.dtoSetToFindUsuarioResponseSet(dtoSet);
+        return responseMapper.dtosToFindUsuarioResponseSet(dtoSet);
     }
 
-    @GetMapping("/{id}")
-    public FindUsuarioResponse findById(@PathVariable int id) {
+    @GetMapping("/{usuarioId}")
+    public FindUsuarioResponse findById(@PathVariable int usuarioId) {
         UsuarioDTO dto = usuarioService
-                .findById(id)
+                .findById(usuarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum usuário existe para esse id."));
         return responseMapper.dtoToFindUsuarioResponse(dto);
+    }
+
+    @GetMapping("/{usuarioId}/seguidores")
+    public Set<FindUsuarioResponse> findSeguidores(@PathVariable int usuarioId) {
+        Set<UsuarioDTO> dtos = usuarioService.findSeguidores(usuarioId);
+        return responseMapper.dtosToFindUsuarioResponseSet(dtos);
+    }
+
+    @GetMapping("/{usuarioId}/seguindo")
+    public Set<FindUsuarioResponse> findSeguindo(@PathVariable int usuarioId) {
+        Set<UsuarioDTO> dtos = usuarioService.findSeguindo(usuarioId);
+        return responseMapper.dtosToFindUsuarioResponseSet(dtos);
     }
 
     @PostMapping
@@ -76,16 +88,16 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/seguidores")
-    public ResponseEntity<Response> addRemoveFollower(@PathVariable int id, @RequestParam int followerId) throws IllegalOperationException {
-        boolean addedRemoved = usuarioService.addRemoveFollower(id, followerId);
-        Response response = new Response(200, String.format("Follower %s.", addedRemoved ? "adicionado" : "removido"), System.currentTimeMillis());
+    public ResponseEntity<Response> saveSeguidores(@PathVariable int id, @RequestParam int seguidorId) throws IllegalOperationException {
+        boolean saved = usuarioService.saveSeguidores(id, seguidorId);
+        Response response = new Response(200, String.format("Seguidor %s com sucesso.", saved ? "adicionado" : "removido"), System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/seguindo")
-    public ResponseEntity<Response> addRemoveFollowing(@PathVariable int id, @RequestParam int followingId) throws IllegalOperationException {
-        boolean addedRemoved = usuarioService.addRemoveFollowing(id, followingId);
-        Response response = new Response(200, String.format("Following %s.", addedRemoved ? "adicionado" : "removido"), System.currentTimeMillis());
+    public ResponseEntity<Response> saveSeguindo(@PathVariable int id, @RequestParam int seguindoId) throws IllegalOperationException {
+        boolean saved = usuarioService.saveSeguidores(id, seguindoId);
+        Response response = new Response(200, String.format("Seguindo %s.", saved ? "adicionado" : "removido"), System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }
 }
