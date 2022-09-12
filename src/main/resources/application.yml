@@ -15,7 +15,7 @@ server:
     key-store: classpath:keystore/argviewer.p12
     key-store-password: password
     key-alias: argviewer
-  ssl-enabled: true
+  ssl-enabled: false
 
 trust:
   store: classpath:keystore/argviewer.p12
