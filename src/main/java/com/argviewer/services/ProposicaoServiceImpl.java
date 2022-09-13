@@ -72,6 +72,16 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         return proposicao.map(proposicaoMapper::proposicaoToDto);
     }
 
+    static Specification<Proposicao> containsTexto(String texto) {
+        return (proposicao, cq, cb) -> proposicao.get("texto").in(texto);
+    }
+
+    @Override
+    public Set<ProposicaoDTO> findByTextoContaining(String value) {
+        Set<Proposicao> proposicoes = Set.copyOf(proposicaoRepository.findAll(where(containsTexto(value))));
+        return proposicaoMapper.proposicoesToDtoSet(proposicoes);
+    }
+
     @Override
     public Set<ProposicaoDTO> findReplicas(int proposicaoId) {
         Proposicao proposicao = proposicaoRepository

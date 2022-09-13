@@ -33,8 +33,14 @@ public class ProposicaoController {
 
     @GetMapping
     public Set<FindProposicaoResponse> find(@RequestParam(required = false) Integer usuarioId, @RequestParam(required = false) Integer tagId) {
-        Set<ProposicaoDTO> dtoSet = proposicaoService.find(usuarioId, tagId);
-        return responseMapper.dtosToFindProposicaoResponseSet(dtoSet);
+        Set<ProposicaoDTO> dtos = proposicaoService.find(usuarioId, tagId);
+        return responseMapper.dtosToFindProposicaoResponseSet(dtos);
+    }
+
+    @GetMapping("/texto")
+    public Set<FindProposicaoResponse> findByTextoContaining(@RequestParam String value) {
+        Set<ProposicaoDTO> dtos = proposicaoService.findByTextoContaining(value);
+        return responseMapper.dtosToFindProposicaoResponseSet(dtos);
     }
 
     @GetMapping("/{proposicaoId}")

@@ -12,6 +12,8 @@ public interface ProposicaoService {
 
     Optional<ProposicaoDTO> findById(int proposicaoId);
 
+    Set<ProposicaoDTO> findByTextoContaining(String value);
+
     Set<ProposicaoDTO> findReplicas(int proposicaoId);
 
     int create(ProposicaoDTO dto);
