@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -46,7 +43,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     static Specification<Proposicao> containsTag(int tagId) {
-        return (proposicao, cq, cb) -> proposicao.join("tags").get("id").in(Set.of(tagId));
+        return (proposicao, cq, cb) -> proposicao.join("tags").get("id").in(new HashSet<>(tagId));
     }
 
     @Override
@@ -54,14 +51,14 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         Set<Proposicao> proposicoes;
 
         if (usuarioId != null && tagId != null)
-            proposicoes = Set.copyOf(proposicaoRepository.findAll(
+            proposicoes = new HashSet<>(proposicaoRepository.findAll(
                     where(belongsTo(usuarioId)).and(containsTag(tagId))));
         else if (usuarioId != null)
-            proposicoes = Set.copyOf(proposicaoRepository.findAll(where(belongsTo(usuarioId))));
+            proposicoes = new HashSet<>(proposicaoRepository.findAll(where(belongsTo(usuarioId))));
         else if (tagId != null)
-            proposicoes = Set.copyOf(proposicaoRepository.findAll(containsTag(tagId)));
+            proposicoes = new HashSet<>(proposicaoRepository.findAll(containsTag(tagId)));
         else
-            proposicoes = Set.copyOf(proposicaoRepository.findAll());
+            proposicoes = new HashSet<>(proposicaoRepository.findAll());
 
         return proposicaoMapper.proposicoesToDtoSet(proposicoes);
     }
@@ -78,7 +75,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
     @Override
     public Set<ProposicaoDTO> findByTextoContaining(String value) {
-        Set<Proposicao> proposicoes = Set.copyOf(proposicaoRepository.findAll(where(containsTexto(value))));
+        Set<Proposicao> proposicoes = new HashSet<>(proposicaoRepository.findAll(where(containsTexto(value))));
         return proposicaoMapper.proposicoesToDtoSet(proposicoes);
     }
 
