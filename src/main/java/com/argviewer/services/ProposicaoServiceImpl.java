@@ -150,7 +150,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<Float> cosineScores = Arrays.stream(outputStream.toString().trim().split(", ")).map(Float::parseFloat).toList();
+        List<Float> cosineScores = Arrays.stream(outputStream.toString().trim().split(", ")).map(Float::parseFloat).collect(Collectors.toList());
 
         if (cosineScores.stream().anyMatch(score -> score > 0.90))
             throw new IllegalOperationException("Essa replica é muito semelhante à proposição");
