@@ -22,6 +22,6 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Set<TagDTO> find() {
-        return tagMapper.tagsToDtoSet(new HashSet<>(tagRepository.findAll()));
+        return tagMapper.tagsToDtoSet(Set.copyOf(tagRepository.findAll()));
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -62,10 +61,10 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
         Set<Usuario> usuarioSet;
 
         if (value != null)
-            usuarioSet = new HashSet<>(
+            usuarioSet = Set.copyOf(
                     usuarioRepository.findAll(Specification.where(usuarioIsActive()).and(nomeContains(value).or(nicknameContains(value)))));
         else
-            usuarioSet = new HashSet<>(usuarioRepository.findAll(Specification.where(usuarioIsActive())));
+            usuarioSet = Set.copyOf(usuarioRepository.findAll(Specification.where(usuarioIsActive())));
 
         return usuarioMapper.usuariosToDtoSet(usuarioSet);
     }

@@ -9,17 +9,20 @@ import com.argviewer.domain.model.entities.Proposicao;
 import com.argviewer.domain.model.entities.Usuario;
 import com.argviewer.domain.model.exceptions.EntityNotFoundException;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.PumpStreamHandler;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 
@@ -43,7 +46,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     static Specification<Proposicao> containsTag(int tagId) {
-        return (proposicao, cq, cb) -> proposicao.join("tags").get("id").in(new HashSet<>(tagId));
+        return (proposicao, cq, cb) -> proposicao.join("tags").get("id").in(Set.of(tagId));
     }
 
     @Override
@@ -51,14 +54,14 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         Set<Proposicao> proposicoes;
 
         if (usuarioId != null && tagId != null)
-            proposicoes = new HashSet<>(proposicaoRepository.findAll(
+            proposicoes = Set.copyOf(proposicaoRepository.findAll(
                     where(belongsTo(usuarioId)).and(containsTag(tagId))));
         else if (usuarioId != null)
-            proposicoes = new HashSet<>(proposicaoRepository.findAll(where(belongsTo(usuarioId))));
+            proposicoes = Set.copyOf(proposicaoRepository.findAll(where(belongsTo(usuarioId))));
         else if (tagId != null)
-            proposicoes = new HashSet<>(proposicaoRepository.findAll(containsTag(tagId)));
+            proposicoes = Set.copyOf(proposicaoRepository.findAll(containsTag(tagId)));
         else
-            proposicoes = new HashSet<>(proposicaoRepository.findAll());
+            proposicoes = Set.copyOf(proposicaoRepository.findAll());
 
         return proposicaoMapper.proposicoesToDtoSet(proposicoes);
     }
@@ -75,7 +78,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
     @Override
     public Set<ProposicaoDTO> findByTextoContaining(String value) {
-        Set<Proposicao> proposicoes = new HashSet<>(proposicaoRepository.findAll(where(containsTexto(value))));
+        Set<Proposicao> proposicoes = Set.copyOf(proposicaoRepository.findAll(where(containsTexto(value))));
         return proposicaoMapper.proposicoesToDtoSet(proposicoes);
     }
 
@@ -102,15 +105,6 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         proposicaoRepository.save(proposicao);
     }
 
-    private String resolvePythonScriptPath(String filename) {
-        File file = new File("src/main/resources/" + filename);
-        return file.getAbsolutePath();
-    }
-
-    private String toQuote(String texto){
-        return String.format("'%s'", texto);
-    }
-
     @Override
     public boolean saveReplicas(int proposicaoId, int replicaId) throws IllegalOperationException {
         if (proposicaoId == replicaId)
@@ -130,27 +124,36 @@ public class ProposicaoServiceImpl implements ProposicaoService {
             return false;
         }
 
-        String line = String.format(
-                "py %s '%s' '%s' %s",
-                resolvePythonScriptPath("python/sentence_similarity.py"),
-                replica.getTexto(),
-                proposicao.getTexto(),
-                proposicao.getReplicas().stream().map(p -> toQuote(p.getTexto())).collect(Collectors.joining(" "))
-        );
-        CommandLine cmdLine = CommandLine.parse(line);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
-        DefaultExecutor executor = new DefaultExecutor();
-        executor.setStreamHandler(streamHandler);
+        List<Float> cosineScores = new ArrayList<>();
         try {
-            executor.execute(cmdLine);
-        } catch (IOException e) {
-            e.printStackTrace();
+            Map<String, Object> map = new HashMap<>();
+            map.put("sentence", replica.getTexto());
+            map.put("sentences_to_compare", Stream.concat(
+                    Stream.of(
+                            proposicao.getTexto()),
+                            proposicao.getReplicas().stream().map(Proposicao::getTexto))
+                    .collect(Collectors.toList()));
+            JSONObject body = new JSONObject(map);
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
+                    .uri(URI.create("https://argviewer-sentence-analyzer.herokuapp.com/api/similarity"))
+                    .setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
+                    .header("Content-Type", "application/json")
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            JSONArray json = new JSONArray(response.body());
+
+            for (int i = 0; i < json.length(); i++) {
+                cosineScores.add(new BigDecimal(json.get(i).toString()).floatValue());
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        List<Float> cosineScores = Arrays.stream(outputStream.toString().trim().split(", ")).map(Float::parseFloat).collect(Collectors.toList());
 
         if (cosineScores.stream().anyMatch(score -> score > 0.90))
-            throw new IllegalOperationException("Essa replica é muito semelhante à proposição");
+            throw new IllegalOperationException("Essa replica é muito semelhante à proposição.");
 
         proposicao.getReplicas().add(replica);
         proposicaoRepository.save(proposicao);
