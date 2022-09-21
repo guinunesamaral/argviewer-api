@@ -10,7 +10,6 @@ import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.HttpStatusRequestRejectedHandler;
 import org.springframework.security.web.firewall.RequestRejectedHandler;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
-import org.springframework.web.cors.CorsUtils;
 
 @EnableWebSecurity
 @Configuration
@@ -19,7 +18,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors();
+                .csrf()
+                .disable();
     }
 
     @Override
