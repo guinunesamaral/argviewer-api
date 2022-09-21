@@ -22,9 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .anyRequest().authenticated()
-                .and().httpBasic();
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll();
     }
 
     @Override
