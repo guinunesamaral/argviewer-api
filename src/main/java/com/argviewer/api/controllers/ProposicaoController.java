@@ -51,9 +51,9 @@ public class ProposicaoController {
         return responseMapper.dtoToFindProposicaoResponse(dto);
     }
 
-    @GetMapping("/{proposicaoId}/replicas")
-    public Set<FindProposicaoResponse> findReplicas(@PathVariable int proposicaoId) {
-        Set<ProposicaoDTO> dtoSet = proposicaoService.findReplicas(proposicaoId);
+    @GetMapping("/{proposicaoId}/respostas")
+    public Set<FindProposicaoResponse> findRespostas(@PathVariable int proposicaoId) {
+        Set<ProposicaoDTO> dtoSet = proposicaoService.findRespostas(proposicaoId);
         return responseMapper.dtosToFindProposicaoResponseSet(dtoSet);
     }
 
@@ -74,7 +74,7 @@ public class ProposicaoController {
 
     @PostMapping("/replica")
     public ResponseEntity<Response> addReplica(@RequestParam int proposicaoId, @RequestParam int replicaId) throws IllegalOperationException {
-        boolean saved = proposicaoService.saveReplicas(proposicaoId, replicaId);
+        boolean saved = proposicaoService.saveRespostas(proposicaoId, replicaId);
         Response response = new Response(200, String.format("Replica %s com sucesso.", saved ? "adicionada" : "removida"), System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }

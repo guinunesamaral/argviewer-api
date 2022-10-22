@@ -14,13 +14,13 @@ public interface ProposicaoService {
 
     Set<ProposicaoDTO> findByTextoContaining(String value);
 
-    Set<ProposicaoDTO> findReplicas(int proposicaoId);
+    Set<ProposicaoDTO> findRespostas(int proposicaoId);
 
     int create(ProposicaoDTO dto);
 
     void update(ProposicaoDTO dto);
 
-    boolean saveReplicas(int proposicaoId, int replicaId) throws IllegalOperationException;
+    boolean saveRespostas(int proposicaoId, int replicaId) throws IllegalOperationException;
 
     void addSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException;
 

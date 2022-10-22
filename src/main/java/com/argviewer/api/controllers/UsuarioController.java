@@ -32,7 +32,7 @@ public class UsuarioController {
         this.requestMapper = requestMapper;
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody LoginRequest request) {
         usuarioService.login(request.getNickname(), request.getSenha());
         Response response = new Response(200, "Usuário logado com sucesso.", System.currentTimeMillis());

@@ -83,11 +83,11 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public Set<ProposicaoDTO> findReplicas(int proposicaoId) {
+    public Set<ProposicaoDTO> findRespostas(int proposicaoId) {
         Proposicao proposicao = proposicaoRepository
                 .findById(proposicaoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
-        return proposicaoMapper.proposicoesToDtoSet(proposicao.getReplicas());
+        return proposicaoMapper.proposicoesToDtoSet(proposicao.getRespostas());
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public boolean saveReplicas(int proposicaoId, int replicaId) throws IllegalOperationException {
+    public boolean saveRespostas(int proposicaoId, int replicaId) throws IllegalOperationException {
         if (proposicaoId == replicaId)
             throw new IllegalOperationException("A proposição não pode ser uma replica a ela mesma.");
 
@@ -118,8 +118,8 @@ public class ProposicaoServiceImpl implements ProposicaoService {
                 .findById(replicaId)
                 .orElseThrow(() -> new EntityNotFoundException("Replica não encontrada."));
 
-        if (proposicao.getReplicas().contains(replica)) {
-            proposicao.getReplicas().remove(replica);
+        if (proposicao.getRespostas().contains(replica)) {
+            proposicao.getRespostas().remove(replica);
             proposicaoRepository.save(proposicao);
             return false;
         }
@@ -131,7 +131,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
             map.put("sentences_to_compare", Stream.concat(
                     Stream.of(
                             proposicao.getTexto()),
-                            proposicao.getReplicas().stream().map(Proposicao::getTexto))
+                            proposicao.getRespostas().stream().map(Proposicao::getTexto))
                     .collect(Collectors.toList()));
             JSONObject body = new JSONObject(map);
 
@@ -153,9 +153,9 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         }
 
         if (cosineScores.stream().anyMatch(score -> score > 0.90))
-            throw new IllegalOperationException("Essa replica é muito semelhante à proposição.");
+            throw new IllegalOperationException("Essa resposta é muito semelhante à proposição inicial.");
 
-        proposicao.getReplicas().add(replica);
+        proposicao.getRespostas().add(replica);
         proposicaoRepository.save(proposicao);
         return true;
     }
