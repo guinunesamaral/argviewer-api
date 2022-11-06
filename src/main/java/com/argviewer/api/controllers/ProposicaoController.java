@@ -73,8 +73,8 @@ public class ProposicaoController {
     }
 
     @PostMapping("/resposta")
-    public ResponseEntity<Response> addResposta(@RequestParam int proposicaoId, @RequestParam int replicaId) throws IllegalOperationException {
-        boolean saved = proposicaoService.saveRespostas(proposicaoId, replicaId);
+    public ResponseEntity<Response> addResposta(@RequestParam int proposicaoId, @RequestParam int respostaId) throws IllegalOperationException {
+        boolean saved = proposicaoService.saveRespostas(proposicaoId, respostaId);
         Response response = new Response(200, String.format("Resposta %s com sucesso.", saved ? "adicionada" : "removida"), System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }
