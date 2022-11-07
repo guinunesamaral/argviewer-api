@@ -41,7 +41,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public Set<ProposicaoDTO> find(Integer usuarioId, Integer tagId) {
+    public List<ProposicaoDTO> find(Integer usuarioId, Integer tagId) {
         Set<Proposicao> proposicoes;
 
         if (usuarioId != null && tagId != null)
@@ -56,7 +56,12 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
         return proposicaoMapper.proposicoesToDtoSet(proposicoes
                 .stream()
-                .filter(Proposicao::isProposicaoInicial).collect(Collectors.toSet()));
+                .filter(Proposicao::isProposicaoInicial)
+                .sorted(Comparator.comparing(Proposicao::getDataCriacao).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new)))
+                .stream()
+                .sorted(Comparator.comparing(ProposicaoDTO::getDataCriacao).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override

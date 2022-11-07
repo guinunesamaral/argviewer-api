@@ -13,10 +13,9 @@ import com.argviewer.domain.model.responses.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/proposicoes")
@@ -33,30 +32,30 @@ public class ProposicaoController {
     }
 
     @GetMapping
-    public Set<FindProposicaoResponse> find(@RequestParam(required = false) Integer usuarioId, @RequestParam(required = false) Integer tagId) {
-        Set<ProposicaoDTO> dtos = proposicaoService.find(usuarioId, tagId);
+    public List<FindProposicaoResponse> find(@RequestParam(required = false) Integer usuarioId, @RequestParam(required = false) Integer tagId) {
+        List<ProposicaoDTO> dtos = proposicaoService.find(usuarioId, tagId);
         return responseMapper.dtosToFindProposicaoResponseSet(dtos);
     }
 
-    @GetMapping("/texto")
-    public Set<FindProposicaoResponse> findByTextoContaining(@RequestParam String value) {
-        Set<ProposicaoDTO> dtos = proposicaoService.findByTextoContaining(value);
-        return responseMapper.dtosToFindProposicaoResponseSet(dtos);
-    }
-
-    @GetMapping("/{proposicaoId}")
-    public FindProposicaoResponse findById(@PathVariable int proposicaoId) {
-        ProposicaoDTO dto = proposicaoService
-                .findById(proposicaoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum usuário existe para esse id."));
-        return responseMapper.dtoToFindProposicaoResponse(dto);
-    }
-
-    @GetMapping("/{proposicaoId}/respostas")
-    public Set<FindProposicaoResponse> findRespostas(@PathVariable int proposicaoId) {
-        Set<ProposicaoDTO> dtoSet = proposicaoService.findRespostas(proposicaoId);
-        return responseMapper.dtosToFindProposicaoResponseSet(dtoSet);
-    }
+//    @GetMapping("/texto")
+//    public Set<FindProposicaoResponse> findByTextoContaining(@RequestParam String value) {
+//        Set<ProposicaoDTO> dtos = proposicaoService.findByTextoContaining(value);
+//        return responseMapper.dtosToFindProposicaoResponseSet(dtos);
+//    }
+//
+//    @GetMapping("/{proposicaoId}")
+//    public FindProposicaoResponse findById(@PathVariable int proposicaoId) {
+//        ProposicaoDTO dto = proposicaoService
+//                .findById(proposicaoId)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum usuário existe para esse id."));
+//        return responseMapper.dtoToFindProposicaoResponse(dto);
+//    }
+//
+//    @GetMapping("/{proposicaoId}/respostas")
+//    public Set<FindProposicaoResponse> findRespostas(@PathVariable int proposicaoId) {
+//        Set<ProposicaoDTO> dtoSet = proposicaoService.findRespostas(proposicaoId);
+//        return responseMapper.dtosToFindProposicaoResponseSet(dtoSet);
+//    }
 
     @PostMapping
     public ResponseEntity<Response> create(@RequestBody CreateProposicaoRequest request) {

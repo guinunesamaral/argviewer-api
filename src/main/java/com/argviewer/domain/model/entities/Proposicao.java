@@ -42,6 +42,8 @@ public class Proposicao {
     @Column(nullable = false)
     private boolean isProposicaoInicial;
 
+    private Boolean isRespostaNegativa;
+
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Proposicao_Usuario"))
     private Usuario usuario;

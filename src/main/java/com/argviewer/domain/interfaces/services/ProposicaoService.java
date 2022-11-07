@@ -3,12 +3,13 @@ package com.argviewer.domain.interfaces.services;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface ProposicaoService {
 
-    Set<ProposicaoDTO> find(Integer usuarioId, Integer tagId);
+    List<ProposicaoDTO> find(Integer usuarioId, Integer tagId);
 
     Optional<ProposicaoDTO> findById(int proposicaoId);
 

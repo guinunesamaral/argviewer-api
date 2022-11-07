@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "spring", imports = Base64.class)
@@ -44,5 +45,5 @@ public interface ResponseMapper {
 
     @Named("DtosToFindProposicaoResponseSet")
     @IterableMapping(qualifiedByName = "DtoToFindProposicaoResponse")
-    Set<FindProposicaoResponse> dtosToFindProposicaoResponseSet(Set<ProposicaoDTO> dtos);
+    List<FindProposicaoResponse> dtosToFindProposicaoResponseSet(List<ProposicaoDTO> dtos);
 }

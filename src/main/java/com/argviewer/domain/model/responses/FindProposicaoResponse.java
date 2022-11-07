@@ -21,6 +21,7 @@ public class FindProposicaoResponse {
     private int relevancia;
     private int veracidade;
     private boolean isProposicaoInicial;
+    private Boolean isRespostaNegativa;
     private FindUsuarioResponse usuario;
     private Set<FindTagResponse> tags;
 }

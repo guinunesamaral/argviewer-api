@@ -19,6 +19,7 @@ public class ProposicaoDTO {
     private int relevancia;
     private int veracidade;
     private boolean isProposicaoInicial;
+    private Boolean isRespostaNegativa;
     private UsuarioDTO usuario;
     private Set<TagDTO> tags;
     private Set<UsuarioDTO> seguidores;
