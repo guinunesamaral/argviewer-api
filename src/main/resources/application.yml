@@ -14,7 +14,7 @@ localhost:
   database: ${localhost.username}:${localhost.password}@localhost:3306/argviewer
 
 server:
-  port: 9000
+  port: ${PORT}
   ssl:
     enabled: false
     key-store-type: PKCS12

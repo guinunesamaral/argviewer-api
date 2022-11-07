@@ -45,7 +45,7 @@ public interface ResponseMapper {
 //    Set<FindProposicaoResponse> respostasToFindProposicaoResponseSet(Set<ProposicaoDTO> dtos);
 
     @Named("DtoToFindProposicaoResponse")
-    @Mapping(target = "usuario", qualifiedByName = "DtoToFindUsuarioResponse")
+//    @Mapping(target = "usuario", qualifiedByName = "DtoToFindUsuarioResponse")
     @Mapping(target = "tags", qualifiedByName = "DtosToFindTagResponseSet")
 //    @Mapping(target = "respostas", qualifiedByName = "RespostasToFindProposicaoResponse")
     FindProposicaoResponse dtoToFindProposicaoResponse(ProposicaoDTO dto);
