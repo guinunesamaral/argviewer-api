@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 
@@ -53,7 +54,9 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         else
             proposicoes = Set.copyOf(proposicaoRepository.findAll());
 
-        return proposicaoMapper.proposicoesToDtoSet(proposicoes);
+        return proposicaoMapper.proposicoesToDtoSet(proposicoes
+                .stream()
+                .filter(Proposicao::isProposicaoInicial).collect(Collectors.toSet()));
     }
 
     @Override
@@ -93,10 +96,10 @@ public class ProposicaoServiceImpl implements ProposicaoService {
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
         proposicaoMapper.dtoToProposicao(dto, proposicao);
         proposicaoRepository.save(proposicao);
-     }
+    }
 
     @Override
-    public boolean saveRespostas(int proposicaoId, int respostaId) throws IllegalOperationException {
+    public boolean addResposta(int proposicaoId, int respostaId) throws IllegalOperationException {
         if (proposicaoId == respostaId)
             throw new IllegalOperationException("A proposição não pode ser uma replica a ela mesma.");
 

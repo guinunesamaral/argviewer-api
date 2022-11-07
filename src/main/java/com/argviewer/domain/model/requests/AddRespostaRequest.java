@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateProposicaoRequest {
+public class AddRespostaRequest {
     private String texto;
     private String fonte;
     private int usuarioId;

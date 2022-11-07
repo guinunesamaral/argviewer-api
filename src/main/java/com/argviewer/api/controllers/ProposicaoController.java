@@ -5,6 +5,7 @@ import com.argviewer.domain.interfaces.mappers.ResponseMapper;
 import com.argviewer.domain.interfaces.services.ProposicaoService;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
+import com.argviewer.domain.model.requests.AddRespostaRequest;
 import com.argviewer.domain.model.requests.CreateProposicaoRequest;
 import com.argviewer.domain.model.requests.UpdateProposicaoRequest;
 import com.argviewer.domain.model.responses.FindProposicaoResponse;
@@ -72,9 +73,10 @@ public class ProposicaoController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/resposta")
-    public ResponseEntity<Response> saveRespostas(@RequestParam int proposicaoId, @RequestParam int respostaId) throws IllegalOperationException {
-        boolean saved = proposicaoService.saveRespostas(proposicaoId, respostaId);
+    @PostMapping("{proposicaoId}/resposta")
+    public ResponseEntity<Response> saveRespostas(@PathVariable int proposicaoId, @RequestBody AddRespostaRequest request) throws IllegalOperationException {
+        int respostaId = proposicaoService.create(requestMapper.addRespostaRequestToDto(request));
+        boolean saved = proposicaoService.addResposta(proposicaoId, respostaId);
         Response response = new Response(200, String.format("Resposta %s com sucesso.", saved ? "adicionada" : "removida"), System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }

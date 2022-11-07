@@ -14,7 +14,6 @@ public class FindUsuarioResponse {
     private String nome;
     private String nickname;
     private String email;
-    private String senha;
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAlteracao;
     private String foto;

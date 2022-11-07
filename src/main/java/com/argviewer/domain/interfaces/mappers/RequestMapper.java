@@ -4,10 +4,7 @@ import com.argviewer.domain.model.dtos.EloDTO;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.dtos.TagDTO;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
-import com.argviewer.domain.model.requests.CreateProposicaoRequest;
-import com.argviewer.domain.model.requests.CreateUsuarioRequest;
-import com.argviewer.domain.model.requests.UpdateProposicaoRequest;
-import com.argviewer.domain.model.requests.UpdateUsuarioRequest;
+import com.argviewer.domain.model.requests.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,7 +32,13 @@ public interface RequestMapper {
     @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
     @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
     @Mapping(target = "tags", expression = "java(Arrays.stream(request.getTagIds()).mapToObj(TagDTO::new).collect(Collectors.toSet()))")
+    @Mapping(target = "proposicaoInicial", expression = "java(true)")
     ProposicaoDTO createProposicaoRequestToDto(CreateProposicaoRequest request);
+
+    @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
+    @Mapping(target = "tags", expression = "java(Arrays.stream(request.getTagIds()).mapToObj(TagDTO::new).collect(Collectors.toSet()))")
+    ProposicaoDTO addRespostaRequestToDto(AddRespostaRequest request);
 
     @Mapping(target = "dataAlteracao", expression = "java(LocalDateTime.now())")
     @Mapping(target = "tags", expression = "java(Arrays.stream(request.getTagIds()).mapToObj(TagDTO::new).collect(Collectors.toSet()))")

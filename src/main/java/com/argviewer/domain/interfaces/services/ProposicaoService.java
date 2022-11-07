@@ -20,7 +20,7 @@ public interface ProposicaoService {
 
     void update(ProposicaoDTO dto);
 
-    boolean saveRespostas(int proposicaoId, int respostaId) throws IllegalOperationException;
+    boolean addResposta(int proposicaoId, int respostaId) throws IllegalOperationException;
 
     void addSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException;
 

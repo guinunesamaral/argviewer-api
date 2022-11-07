@@ -20,6 +20,7 @@ public class FindProposicaoResponse {
     private int qtdDownvotes;
     private int relevancia;
     private int veracidade;
+    private boolean isProposicaoInicial;
     private FindUsuarioResponse usuario;
     private Set<FindTagResponse> tags;
 }
