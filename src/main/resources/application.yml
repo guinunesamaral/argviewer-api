@@ -6,7 +6,7 @@ heroku:
 google-cloud:
   username: root
   password: n&lN.^t].efpX\d*
-  database: 35.247.252.208:3306/argbr
+  database: 35.247.252.208:3306/argviewer
 
 localhost:
   username: root
