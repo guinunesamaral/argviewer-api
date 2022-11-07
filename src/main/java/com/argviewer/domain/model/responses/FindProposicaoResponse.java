@@ -1,5 +1,6 @@
 package com.argviewer.domain.model.responses;
 
+import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,4 +25,5 @@ public class FindProposicaoResponse {
     private Boolean isRespostaNegativa;
     private FindUsuarioResponse usuario;
     private Set<FindTagResponse> tags;
+    private Set<ProposicaoDTO> respostas;
 }

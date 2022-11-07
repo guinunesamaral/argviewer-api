@@ -12,7 +12,7 @@ public interface ProposicaoMapper {
     @Mapping(target = "usuario", qualifiedByName = "UsuarioToDto")
     @Mapping(target = "tags", qualifiedByName = "TagsToDtoSet")
     @Mapping(target = "seguidores", ignore = true)
-    @Mapping(target = "respostas", ignore = true)
+//    @Mapping(target = "respostas", ignore = true)
     ProposicaoDTO proposicaoToDto(Proposicao proposicao);
 
     @IterableMapping(qualifiedByName = "ProposicaoToDto")

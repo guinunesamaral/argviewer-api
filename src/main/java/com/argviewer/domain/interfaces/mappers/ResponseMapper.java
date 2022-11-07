@@ -38,9 +38,16 @@ public interface ResponseMapper {
     @IterableMapping(qualifiedByName = "DtoToFindTagResponse")
     Set<FindTagResponse> dtoSetToFindTagResponseSet(Set<TagDTO> dtos);
 
+//    @Named("RespostasToFindProposicaoResponse")
+//    @Mapping(target = "usuario", ignore = true)
+//    @Mapping(target = "tags", ignore = true)
+//    @Mapping(target = "respostas", ignore = true)
+//    Set<FindProposicaoResponse> respostasToFindProposicaoResponseSet(Set<ProposicaoDTO> dtos);
+
     @Named("DtoToFindProposicaoResponse")
     @Mapping(target = "usuario", qualifiedByName = "DtoToFindUsuarioResponse")
     @Mapping(target = "tags", qualifiedByName = "DtosToFindTagResponseSet")
+//    @Mapping(target = "respostas", qualifiedByName = "RespostasToFindProposicaoResponse")
     FindProposicaoResponse dtoToFindProposicaoResponse(ProposicaoDTO dto);
 
     @Named("DtosToFindProposicaoResponseSet")
