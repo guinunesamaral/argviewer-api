@@ -1,30 +1,10 @@
-heroku:
-  username: b2cf313e5c854b
-  password: f227b197
-  database: ${heroku.username}:${heroku.password}@us-cdbr-east-06.cleardb.net/heroku_9e1cce48c06f67b?reconnect=true
-
 google-cloud:
-  username: root
-  password: 5-=6K7tG@BjL4sI^
-  database: 34.86.101.128:3306/argviewer
-
-localhost:
-  username: root
-  password: password
-  database: ${localhost.username}:${localhost.password}@localhost:3306/argviewer
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+  database: ${DB_HOST}
 
 server:
-  port: 9000
-  ssl:
-    enabled: false
-    key-store-type: PKCS12
-    key-store: classpath:keystore/argviewer.p12
-    key-store-password: password
-    key-alias: argviewer
-
-trust:
-  store: classpath:keystore/argviewer.p12
-  store.password: password
+  port: ${PORT}
 
 springdoc:
   api-docs:
