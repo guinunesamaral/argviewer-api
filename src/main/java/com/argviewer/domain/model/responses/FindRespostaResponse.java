@@ -30,5 +30,6 @@ public class FindRespostaResponse {
         private String email;
         private boolean isActive;
         private boolean isAnonimo;
+        private String foto;
     }
 }

@@ -32,6 +32,7 @@ public interface ResponseMapper {
 
     // Proposicao e suas respostas. Cada resposta com um usuário
     @Named("DtoToFindUsuarioRespostaResponse")
+    @Mapping(target = "foto", expression = "java(dto.getFoto() != null ? new String(Base64.getUrlDecoder().decode(dto.getFoto())) : null)")
     FindRespostaResponse.FindRespostaUsuarioResponse dtoToFindUsuarioRespostaResponse(UsuarioDTO dto);
 
     @Named("DtoToFindRespostaResponse")

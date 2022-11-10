@@ -19,7 +19,6 @@ public class UsuarioDTO {
 	private byte[] foto;
 	private boolean isActive;
 	private boolean isAnonimo;
-	private boolean isModerador;
 	private List<ProposicaoDTO> proposicoesCriadas;
 
 	public UsuarioDTO() {
