@@ -107,17 +107,13 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public void addResposta(int proposicaoId, int respostaId) throws IllegalOperationException {
-        if (proposicaoId == respostaId)
-            throw new IllegalOperationException("A proposição não pode ser uma replica a ela mesma.");
-
+    public void addResposta(int proposicaoId, ProposicaoDTO dto) throws IllegalOperationException {
         Proposicao proposicao = proposicaoRepository
                 .findById(proposicaoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
 
-        Proposicao resposta = proposicaoRepository
-                .findById(respostaId)
-                .orElseThrow(() -> new EntityNotFoundException("Resposta não encontrada."));
+        Proposicao resposta = proposicaoMapper.dtoToProposicao(dto);
+        proposicaoRepository.save(resposta);
 
         proposicao.getRespostas().add(resposta);
         proposicaoRepository.save(proposicao);

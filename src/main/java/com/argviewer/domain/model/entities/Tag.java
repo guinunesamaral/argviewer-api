@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +20,7 @@ public class Tag {
     private String descricao;
 
     @ManyToMany(mappedBy = "tags")
-    private Set<Proposicao> proposicoes;
+    private List<Proposicao> proposicoes;
 
     public Tag() {
     }

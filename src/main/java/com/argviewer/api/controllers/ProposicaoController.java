@@ -75,8 +75,7 @@ public class ProposicaoController {
 
     @PostMapping("{proposicaoId}/resposta")
     public ResponseEntity<Response> addResposta(@PathVariable int proposicaoId, @RequestBody AddRespostaRequest request) throws IllegalOperationException {
-        int respostaId = proposicaoService.create(requestMapper.addRespostaRequestToDto(request));
-        proposicaoService.addResposta(proposicaoId, respostaId);
+        proposicaoService.addResposta(proposicaoId, requestMapper.addRespostaRequestToDto(request));
         Response response = new Response(200, "Resposta adicionada com sucesso.", System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }

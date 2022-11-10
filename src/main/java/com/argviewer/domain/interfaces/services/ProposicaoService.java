@@ -20,11 +20,7 @@ public interface ProposicaoService {
 
     void update(ProposicaoDTO dto);
 
-    void addResposta(int proposicaoId, int respostaId) throws IllegalOperationException;
-
-//    void addSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException;
-
-//    void removeSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException;
+    void addResposta(int proposicaoId, ProposicaoDTO dto) throws IllegalOperationException;
 
     void deleteById(int proposicaoId);
 }
