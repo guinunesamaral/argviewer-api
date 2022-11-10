@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import java.util.Set;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TagMapper {
@@ -16,15 +16,15 @@ public interface TagMapper {
     @Mapping(target = "proposicoes", ignore = true)
     TagDTO tagToDto(Tag tag);
 
-    @Named("TagsToDtoSet")
+    @Named("TagsToDtoList")
     @IterableMapping(qualifiedByName = "TagToDto")
-    Set<TagDTO> tagsToDtoSet(Set<Tag> tags);
+    List<TagDTO> tagsToDtoList(List<Tag> tags);
 
     @Named("DtoToTag")
     @Mapping(target = "proposicoes", ignore = true)
     Tag dtoToTag(TagDTO dto);
 
-    @Named("DtosToTagSet")
+    @Named("DtosToTagList")
     @IterableMapping(qualifiedByName = "DtoToTag")
-    Set<Tag> dtosToTagSet(Set<TagDTO> dtos);
+    List<Tag> dtosToTagList(List<TagDTO> dtos);
 }

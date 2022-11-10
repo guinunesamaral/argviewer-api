@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,9 +21,8 @@ public class ProposicaoDTO {
     private boolean isProposicaoInicial;
     private Boolean isRespostaNegativa;
     private UsuarioDTO usuario;
-    private Set<TagDTO> tags;
-    private Set<UsuarioDTO> seguidores;
-    private Set<ProposicaoDTO> respostas;
+    private List<TagDTO> tags;
+    private List<ProposicaoDTO> respostas;
 
     public ProposicaoDTO() {
     }

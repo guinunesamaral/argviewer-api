@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tags")
@@ -23,8 +23,8 @@ public class TagController {
     }
 
     @GetMapping
-    public Set<FindTagResponse> find() {
-        Set<TagDTO> dtoSet = tagService.find();
-        return responseMapper.dtoSetToFindTagResponseSet(dtoSet);
+    public List<FindTagResponse> find() {
+        List<TagDTO> dtoList = tagService.find();
+        return responseMapper.dtoListToFindTagResponseList(dtoList);
     }
 }

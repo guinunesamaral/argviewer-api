@@ -1,12 +1,11 @@
 package com.argviewer.domain.model.responses;
 
-import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,10 +18,7 @@ public class FindProposicaoResponse {
     private LocalDateTime dataAlteracao;
     private int qtdUpvotes;
     private int qtdDownvotes;
-    private int relevancia;
-    private int veracidade;
     private boolean isProposicaoInicial;
     private Boolean isRespostaNegativa;
-    private Set<FindTagResponse> tags;
-    private Set<FindRespostaResponse> respostas;
+    private List<FindRespostaResponse> respostas;
 }

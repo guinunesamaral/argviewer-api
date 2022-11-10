@@ -17,8 +17,18 @@ public class FindRespostaResponse {
     private LocalDateTime dataAlteracao;
     private int qtdUpvotes;
     private int qtdDownvotes;
-    private int relevancia;
-    private int veracidade;
-    private boolean isProposicaoInicial;
     private Boolean isRespostaNegativa;
+    private FindRespostaUsuarioResponse usuario;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class FindRespostaUsuarioResponse {
+        private int id;
+        private String nome;
+        private String nickname;
+        private String email;
+        private boolean isActive;
+        private boolean isAnonimo;
+    }
 }

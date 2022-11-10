@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -40,9 +40,9 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public Set<FindUsuarioResponse> find(@RequestParam(required = false) String value) {
-        Set<UsuarioDTO> dtoSet = usuarioService.find(value);
-        return responseMapper.dtosToFindUsuarioResponseSet(dtoSet);
+    public List<FindUsuarioResponse> find(@RequestParam(required = false) String value) {
+        List<UsuarioDTO> dtoList = usuarioService.find(value);
+        return responseMapper.dtosToFindUsuarioResponseList(dtoList);
     }
 
     @GetMapping("/{usuarioId}")
@@ -51,18 +51,6 @@ public class UsuarioController {
                 .findById(usuarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum usuário existe para esse id."));
         return responseMapper.dtoToFindUsuarioResponse(dto);
-    }
-
-    @GetMapping("/{usuarioId}/seguidores")
-    public Set<FindUsuarioResponse> findSeguidores(@PathVariable int usuarioId) {
-        Set<UsuarioDTO> dtos = usuarioService.findSeguidores(usuarioId);
-        return responseMapper.dtosToFindUsuarioResponseSet(dtos);
-    }
-
-    @GetMapping("/{usuarioId}/seguindo")
-    public Set<FindUsuarioResponse> findSeguindo(@PathVariable int usuarioId) {
-        Set<UsuarioDTO> dtos = usuarioService.findSeguindo(usuarioId);
-        return responseMapper.dtosToFindUsuarioResponseSet(dtos);
     }
 
     @PostMapping
@@ -84,20 +72,6 @@ public class UsuarioController {
     public ResponseEntity<Response> inactivate(@PathVariable int id) throws IllegalOperationException {
         usuarioService.inactivate(id);
         Response response = new Response(200, "O usuário foi inativado.", System.currentTimeMillis());
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping("/{id}/seguidores")
-    public ResponseEntity<Response> saveSeguidores(@PathVariable int id, @RequestParam int seguidorId) throws IllegalOperationException {
-        boolean saved = usuarioService.saveSeguidores(id, seguidorId);
-        Response response = new Response(200, String.format("Seguidor %s com sucesso.", saved ? "adicionado" : "removido"), System.currentTimeMillis());
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping("/{id}/seguindo")
-    public ResponseEntity<Response> saveSeguindo(@PathVariable int id, @RequestParam int seguindoId) throws IllegalOperationException {
-        boolean saved = usuarioService.saveSeguidores(id, seguindoId);
-        Response response = new Response(200, String.format("Seguindo %s.", saved ? "adicionado" : "removido"), System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }
 }

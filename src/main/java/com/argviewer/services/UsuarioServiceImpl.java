@@ -2,6 +2,7 @@ package com.argviewer.services;
 
 import com.argviewer.domain.interfaces.mappers.UsuarioMapper;
 import com.argviewer.domain.interfaces.repositories.UsuarioRepository;
+import com.argviewer.domain.interfaces.services.UsuarioService;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
 import com.argviewer.domain.model.entities.Usuario;
 import com.argviewer.domain.model.exceptions.AccessDeniedException;
@@ -14,10 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 
 @Service
-public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.services.UsuarioService {
+public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
@@ -57,38 +58,22 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
     }
 
     @Override
-    public Set<UsuarioDTO> find(String value) {
-        Set<Usuario> usuarioSet;
+    public List<UsuarioDTO> find(String value) {
+        List<Usuario> usuarios;
 
         if (value != null)
-            usuarioSet = Set.copyOf(
-                    usuarioRepository.findAll(Specification.where(usuarioIsActive()).and(nomeContains(value).or(nicknameContains(value)))));
+            usuarios = usuarioRepository.findAll(
+                    Specification.where(usuarioIsActive()).and(nomeContains(value).or(nicknameContains(value))));
         else
-            usuarioSet = Set.copyOf(usuarioRepository.findAll(Specification.where(usuarioIsActive())));
+            usuarios = usuarioRepository.findAll(Specification.where(usuarioIsActive()));
 
-        return usuarioMapper.usuariosToDtoSet(usuarioSet);
+        return usuarioMapper.usuariosToDtoList(usuarios);
     }
 
     @Override
     public Optional<UsuarioDTO> findById(int usuarioId) {
         Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
         return usuario.map(usuarioMapper::usuarioToDto);
-    }
-
-    @Override
-    public Set<UsuarioDTO> findSeguidores(int usuarioId) {
-        Usuario usuario = usuarioRepository
-                .findById(usuarioId)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
-        return usuarioMapper.usuariosToDtoSet(usuario.getSeguidores());
-    }
-
-    @Override
-    public Set<UsuarioDTO> findSeguindo(int usuarioId) {
-        Usuario usuario = usuarioRepository
-                .findById(usuarioId)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
-        return usuarioMapper.usuariosToDtoSet(usuario.getSeguindo());
     }
 
     @Override
@@ -131,63 +116,5 @@ public class UsuarioServiceImpl implements com.argviewer.domain.interfaces.servi
 
         usuario.setActive(false);
         usuarioRepository.save(usuario);
-    }
-
-    @Override
-    public boolean saveSeguidores(int usuarioId, int seguidorId) throws IllegalOperationException {
-        if (usuarioId == seguidorId)
-            throw new IllegalOperationException("Usuário não pode seguir ele mesmo.");
-
-        Usuario usuario = usuarioRepository
-                .findById(usuarioId)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
-
-        Usuario seguidor = usuarioRepository
-                .findById(seguidorId)
-                .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
-
-        if (!usuario.isActive())
-            throw new IllegalOperationException("Usuário está inativo.");
-
-        if (!seguidor.isActive())
-            throw new IllegalOperationException("Pessoa está inativa.");
-
-        if (!usuario.getSeguidores().contains(seguidor)) {
-            usuario.getSeguidores().add(seguidor);
-            usuarioRepository.save(usuario);
-            return true;
-        }
-        usuario.getSeguidores().remove(seguidor);
-        usuarioRepository.save(usuario);
-        return false;
-    }
-
-    @Override
-    public boolean saveSeguindo(int usuarioId, int followingId) throws IllegalOperationException {
-        if (usuarioId == followingId)
-            throw new IllegalOperationException("Usuário não pode seguir ele mesmo.");
-
-        Usuario usuario = usuarioRepository
-                .findById(usuarioId)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
-
-        Usuario seguindo = usuarioRepository
-                .findById(followingId)
-                .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
-
-        if (!usuario.isActive())
-            throw new IllegalOperationException("Usuário está inativo.");
-
-        if (!seguindo.isActive())
-            throw new IllegalOperationException("Pessoa está inativa.");
-
-        if (!seguindo.getSeguidores().contains(usuario)) {
-            seguindo.getSeguidores().add(usuario);
-            usuarioRepository.save(seguindo);
-            return true;
-        }
-        seguindo.getSeguidores().remove(usuario);
-        usuarioRepository.save(seguindo);
-        return false;
     }
 }

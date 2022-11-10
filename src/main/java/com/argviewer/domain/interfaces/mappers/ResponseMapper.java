@@ -1,6 +1,5 @@
 package com.argviewer.domain.interfaces.mappers;
 
-import com.argviewer.domain.model.dtos.EloDTO;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.dtos.TagDTO;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
@@ -12,45 +11,43 @@ import org.mapstruct.Named;
 
 import java.util.Base64;
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring", imports = Base64.class)
 public interface ResponseMapper {
 
-    CreateUsuarioResponse idToCreateUsuarioResponse(Integer id);
-
     @Named("DtoToFindUsuarioResponse")
     @Mapping(target = "foto", expression = "java(dto.getFoto() != null ? new String(Base64.getUrlDecoder().decode(dto.getFoto())) : null)")
-    @Mapping(target = "elo", qualifiedByName = "DtoToFindEloResponse")
     FindUsuarioResponse dtoToFindUsuarioResponse(UsuarioDTO dto);
 
-    @Named("DtoToFindEloResponse")
-    FindEloResponse dtoToFindEloResponse(EloDTO dto);
-
-    @Named("DtosToFindUsuarioResponseSet")
+    @Named("DtosToFindUsuarioResponseList")
     @IterableMapping(qualifiedByName = "DtoToFindUsuarioResponse")
-    Set<FindUsuarioResponse> dtosToFindUsuarioResponseSet(Set<UsuarioDTO> dtos);
+    List<FindUsuarioResponse> dtosToFindUsuarioResponseList(List<UsuarioDTO> dtos);
 
     @Named("DtoToFindTagResponse")
     FindTagResponse dtoToFindTagResponse(TagDTO dto);
 
-    @Named("DtosToFindTagResponseSet")
+    @Named("DtosToFindTagResponseList")
     @IterableMapping(qualifiedByName = "DtoToFindTagResponse")
-    Set<FindTagResponse> dtoSetToFindTagResponseSet(Set<TagDTO> dtos);
+    List<FindTagResponse> dtoListToFindTagResponseList(List<TagDTO> dtos);
 
-//    @Named("RespostasToFindProposicaoResponse")
-//    @Mapping(target = "usuario", ignore = true)
-//    @Mapping(target = "tags", ignore = true)
-//    @Mapping(target = "respostas", ignore = true)
-//    Set<FindProposicaoResponse> respostasToFindProposicaoResponseSet(Set<ProposicaoDTO> dtos);
+    // Proposicao e suas respostas. Cada resposta com um usuário
+    @Named("DtoToFindUsuarioRespostaResponse")
+    FindRespostaResponse.FindRespostaUsuarioResponse dtoToFindUsuarioRespostaResponse(UsuarioDTO dto);
+
+    @Named("DtoToFindRespostaResponse")
+    @Mapping(target = "usuario", qualifiedByName = "DtoToFindUsuarioRespostaResponse")
+    FindRespostaResponse dtoToFindRespostaResponse(ProposicaoDTO dto);
+
+    @Named("DtosToFindRespostaResponseList")
+    @IterableMapping(qualifiedByName = "DtoToFindRespostaResponse")
+    List<FindRespostaResponse> dtosToFindRespostaResponseList(List<ProposicaoDTO> respostas);
 
     @Named("DtoToFindProposicaoResponse")
-//    @Mapping(target = "usuario", qualifiedByName = "DtoToFindUsuarioResponse")
-    @Mapping(target = "tags", qualifiedByName = "DtosToFindTagResponseSet")
-//    @Mapping(target = "respostas", qualifiedByName = "RespostasToFindProposicaoResponse")
+    @Mapping(target = "respostas", qualifiedByName = "DtosToFindRespostaResponseList")
     FindProposicaoResponse dtoToFindProposicaoResponse(ProposicaoDTO dto);
 
-    @Named("DtosToFindProposicaoResponseSet")
+    @Named("DtosToFindProposicaoResponseList")
     @IterableMapping(qualifiedByName = "DtoToFindProposicaoResponse")
-    List<FindProposicaoResponse> dtosToFindProposicaoResponseSet(List<ProposicaoDTO> dtos);
+    List<FindProposicaoResponse> dtosToFindProposicaoResponseList(List<ProposicaoDTO> dtos);
+
 }

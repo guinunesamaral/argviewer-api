@@ -6,8 +6,7 @@ import com.argviewer.domain.interfaces.services.TagService;
 import com.argviewer.domain.model.dtos.TagDTO;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -21,7 +20,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Set<TagDTO> find() {
-        return tagMapper.tagsToDtoSet(Set.copyOf(tagRepository.findAll()));
+    public List<TagDTO> find() {
+        return tagMapper.tagsToDtoList(tagRepository.findAll());
     }
 }

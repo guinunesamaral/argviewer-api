@@ -7,7 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -51,39 +51,18 @@ public class Usuario {
     @Column(nullable = false)
     private boolean isAnonimo;
 
-    @Column(nullable = false)
-    private boolean isModerador;
-
-    @ManyToOne
-    @JoinColumn(name = "elo_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Usuario_Elo"))
-    private Elo elo;
-
     @OneToMany(mappedBy = "usuario")
-    private Set<Proposicao> proposicoesCriadas;
-
-    @ManyToMany(mappedBy = "seguidores")
-    private Set<Proposicao> proposicoesSeguindo;
-
-    @ManyToMany
-    @JoinTable(
-            name = "usuario_seguidor",
-            joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_UsuarioSeguidor_Usuario")),
-            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_UsuarioSeguidor_Seguidor")))
-    private Set<Usuario> seguidores;
-
-    @ManyToMany(mappedBy = "seguidores")
-    private Set<Usuario> seguindo;
+    private List<Proposicao> proposicoesCriadas;
 
     public Usuario() {
     }
 
-    public Usuario(int id, String nome, String nickname, String email, String senha, byte[] foto, Elo elo) {
+    public Usuario(int id, String nome, String nickname, String email, String senha, byte[] foto) {
         this.id = id;
         this.nome = nome;
         this.nickname = nickname;
         this.email = email;
         this.senha = senha;
         this.foto = foto;
-        this.elo = elo;
     }
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -53,24 +53,17 @@ public class Proposicao {
             name = "proposicao_tag",
             joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTag_Proposicao")),
             inverseJoinColumns = @JoinColumn(name = "tag_id", foreignKey = @ForeignKey(name = "FK_ProposicaoTag_Tag")))
-    private Set<Tag> tags;
-
-    @ManyToMany
-    @JoinTable(
-            name = "proposicao_seguidor",
-            joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoSeguidor_Proposicao")),
-            inverseJoinColumns = @JoinColumn(name = "seguidor_id", foreignKey = @ForeignKey(name = "FK_ProposicaoSeguidor_Seguidor")))
-    private Set<Usuario> seguidores;
+    private List<Tag> tags;
 
     @ManyToMany
     @JoinTable(
             name = "proposicao_resposta",
             joinColumns = @JoinColumn(name = "proposicao_id", foreignKey = @ForeignKey(name = "FK_ProposicaoResposta_Proposicao")),
             inverseJoinColumns = @JoinColumn(name = "resposta_id", foreignKey = @ForeignKey(name = "FK_ProposicaoResposta_Resposta")))
-    private Set<Proposicao> respostas;
+    private List<Proposicao> respostas;
 
     @ManyToMany(mappedBy = "respostas")
-    private Set<Proposicao> proposicoes;
+    private List<Proposicao> proposicoes;
 
     public Proposicao() {
     }

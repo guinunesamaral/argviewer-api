@@ -2,11 +2,9 @@ package com.argviewer.services;
 
 import com.argviewer.domain.interfaces.mappers.ProposicaoMapper;
 import com.argviewer.domain.interfaces.repositories.ProposicaoRepository;
-import com.argviewer.domain.interfaces.repositories.UsuarioRepository;
 import com.argviewer.domain.interfaces.services.ProposicaoService;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.entities.Proposicao;
-import com.argviewer.domain.model.entities.Usuario;
 import com.argviewer.domain.model.exceptions.EntityNotFoundException;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,13 +20,10 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
     private final ProposicaoRepository proposicaoRepository;
 
-    private final UsuarioRepository usuarioRepository;
-
     private final ProposicaoMapper proposicaoMapper;
 
-    public ProposicaoServiceImpl(ProposicaoRepository proposicaoRepository, UsuarioRepository usuarioRepository, ProposicaoMapper proposicaoMapper) {
+    public ProposicaoServiceImpl(ProposicaoRepository proposicaoRepository, ProposicaoMapper proposicaoMapper) {
         this.proposicaoRepository = proposicaoRepository;
-        this.usuarioRepository = usuarioRepository;
         this.proposicaoMapper = proposicaoMapper;
     }
 
@@ -42,26 +37,23 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
     @Override
     public List<ProposicaoDTO> find(Integer usuarioId, Integer tagId) {
-        Set<Proposicao> proposicoes;
+        List<Proposicao> proposicoes;
 
         if (usuarioId != null && tagId != null)
-            proposicoes = Set.copyOf(proposicaoRepository.findAll(
-                    where(belongsTo(usuarioId)).and(containsTag(tagId))));
+            proposicoes = proposicaoRepository.findAll(
+                    where(belongsTo(usuarioId)).and(containsTag(tagId)));
         else if (usuarioId != null)
-            proposicoes = Set.copyOf(proposicaoRepository.findAll(where(belongsTo(usuarioId))));
+            proposicoes = proposicaoRepository.findAll(where(belongsTo(usuarioId)));
         else if (tagId != null)
-            proposicoes = Set.copyOf(proposicaoRepository.findAll(containsTag(tagId)));
+            proposicoes = proposicaoRepository.findAll(containsTag(tagId));
         else
-            proposicoes = Set.copyOf(proposicaoRepository.findAll());
+            proposicoes = proposicaoRepository.findAll();
 
-        return proposicaoMapper.proposicoesToDtoSet(proposicoes
+        return proposicaoMapper.proposicoesToDtoList(proposicoes
                 .stream()
                 .filter(Proposicao::isProposicaoInicial)
-                .sorted(Comparator.comparing(Proposicao::getDataCriacao).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new)))
-                .stream()
-                .sorted(Comparator.comparing(ProposicaoDTO::getDataCriacao).reversed())
-                .collect(Collectors.toList());
+                .sorted((p1, p2) -> Integer.compare(p2.getRespostas().size(), p1.getRespostas().size()))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -75,17 +67,23 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public Set<ProposicaoDTO> findByTextoContaining(String value) {
-        Set<Proposicao> proposicoes = Set.copyOf(proposicaoRepository.findAll(where(containsTexto(value))));
-        return proposicaoMapper.proposicoesToDtoSet(proposicoes);
+    public List<ProposicaoDTO> findByTextoContaining(String value) {
+        List<Proposicao> proposicoes = proposicaoRepository.findAll(where(containsTexto(value)));
+        return proposicaoMapper.proposicoesToDtoList(proposicoes
+                .stream()
+                .sorted((p1, p2) -> Integer.compare(p2.getRespostas().size(), p1.getRespostas().size()))
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public Set<ProposicaoDTO> findRespostas(int proposicaoId) {
+    public List<ProposicaoDTO> findRespostas(int proposicaoId) {
         Proposicao proposicao = proposicaoRepository
                 .findById(proposicaoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
-        return proposicaoMapper.proposicoesToDtoSet(proposicao.getRespostas());
+        return proposicaoMapper.proposicoesToDtoList(proposicao.getRespostas()
+                .stream()
+                .sorted((p1, p2) -> p2.getDataCriacao().compareTo(p1.getDataCriacao()))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -104,7 +102,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public boolean addResposta(int proposicaoId, int respostaId) throws IllegalOperationException {
+    public void addResposta(int proposicaoId, int respostaId) throws IllegalOperationException {
         if (proposicaoId == respostaId)
             throw new IllegalOperationException("A proposição não pode ser uma replica a ela mesma.");
 
@@ -116,47 +114,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
                 .findById(respostaId)
                 .orElseThrow(() -> new EntityNotFoundException("Resposta não encontrada."));
 
-        if (proposicao.getRespostas().contains(resposta)) {
-            proposicao.getRespostas().remove(resposta);
-            proposicaoRepository.save(proposicao);
-            return false;
-        }
         proposicao.getRespostas().add(resposta);
-        proposicaoRepository.save(proposicao);
-        return true;
-    }
-
-    @Override
-    public void addSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException {
-        Proposicao proposicao = proposicaoRepository
-                .findById(proposicaoId)
-                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
-
-        Usuario seguidor = usuarioRepository
-                .findById(seguidorId)
-                .orElseThrow(() -> new EntityNotFoundException("Seguidor não encontrado."));
-
-        if (proposicao.getSeguidores().contains(seguidor))
-            throw new IllegalOperationException("Você já segue essa proposição.");
-
-        proposicao.getSeguidores().add(seguidor);
-        proposicaoRepository.save(proposicao);
-    }
-
-    @Override
-    public void removeSeguidor(int proposicaoId, int seguidorId) throws IllegalOperationException {
-        Proposicao proposicao = proposicaoRepository
-                .findById(proposicaoId)
-                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
-
-        Usuario seguidor = usuarioRepository
-                .findById(seguidorId)
-                .orElseThrow(() -> new EntityNotFoundException("Seguidor não encontrada."));
-
-        if (!proposicao.getSeguidores().contains(seguidor))
-            throw new IllegalOperationException("Você não segue essa proposição.");
-
-        proposicao.getSeguidores().remove(seguidor);
         proposicaoRepository.save(proposicao);
     }
 

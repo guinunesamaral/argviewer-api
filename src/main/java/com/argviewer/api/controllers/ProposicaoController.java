@@ -13,6 +13,7 @@ import com.argviewer.domain.model.responses.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
@@ -34,28 +35,28 @@ public class ProposicaoController {
     @GetMapping
     public List<FindProposicaoResponse> find(@RequestParam(required = false) Integer usuarioId, @RequestParam(required = false) Integer tagId) {
         List<ProposicaoDTO> dtos = proposicaoService.find(usuarioId, tagId);
-        return responseMapper.dtosToFindProposicaoResponseSet(dtos);
+        return responseMapper.dtosToFindProposicaoResponseList(dtos);
     }
 
-//    @GetMapping("/texto")
-//    public Set<FindProposicaoResponse> findByTextoContaining(@RequestParam String value) {
-//        Set<ProposicaoDTO> dtos = proposicaoService.findByTextoContaining(value);
-//        return responseMapper.dtosToFindProposicaoResponseSet(dtos);
-//    }
-//
-//    @GetMapping("/{proposicaoId}")
-//    public FindProposicaoResponse findById(@PathVariable int proposicaoId) {
-//        ProposicaoDTO dto = proposicaoService
-//                .findById(proposicaoId)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum usuário existe para esse id."));
-//        return responseMapper.dtoToFindProposicaoResponse(dto);
-//    }
-//
-//    @GetMapping("/{proposicaoId}/respostas")
-//    public Set<FindProposicaoResponse> findRespostas(@PathVariable int proposicaoId) {
-//        Set<ProposicaoDTO> dtoSet = proposicaoService.findRespostas(proposicaoId);
-//        return responseMapper.dtosToFindProposicaoResponseSet(dtoSet);
-//    }
+    @GetMapping("/texto")
+    public List<FindProposicaoResponse> findByTextoContaining(@RequestParam String value) {
+        List<ProposicaoDTO> dtos = proposicaoService.findByTextoContaining(value);
+        return responseMapper.dtosToFindProposicaoResponseList(dtos);
+    }
+
+    @GetMapping("/{proposicaoId}")
+    public FindProposicaoResponse findById(@PathVariable int proposicaoId) {
+        ProposicaoDTO dto = proposicaoService
+                .findById(proposicaoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum usuário existe para esse id."));
+        return responseMapper.dtoToFindProposicaoResponse(dto);
+    }
+
+    @GetMapping("/{proposicaoId}/respostas")
+    public List<FindProposicaoResponse> findRespostas(@PathVariable int proposicaoId) {
+        List<ProposicaoDTO> dtoList = proposicaoService.findRespostas(proposicaoId);
+        return responseMapper.dtosToFindProposicaoResponseList(dtoList);
+    }
 
     @PostMapping
     public ResponseEntity<Response> create(@RequestBody CreateProposicaoRequest request) {
@@ -73,10 +74,10 @@ public class ProposicaoController {
     }
 
     @PostMapping("{proposicaoId}/resposta")
-    public ResponseEntity<Response> saveRespostas(@PathVariable int proposicaoId, @RequestBody AddRespostaRequest request) throws IllegalOperationException {
+    public ResponseEntity<Response> addResposta(@PathVariable int proposicaoId, @RequestBody AddRespostaRequest request) throws IllegalOperationException {
         int respostaId = proposicaoService.create(requestMapper.addRespostaRequestToDto(request));
-        boolean saved = proposicaoService.addResposta(proposicaoId, respostaId);
-        Response response = new Response(200, String.format("Resposta %s com sucesso.", saved ? "adicionada" : "removida"), System.currentTimeMillis());
+        proposicaoService.addResposta(proposicaoId, respostaId);
+        Response response = new Response(200, "Resposta adicionada com sucesso.", System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }
 

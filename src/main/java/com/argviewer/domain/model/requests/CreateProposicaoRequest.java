@@ -11,5 +11,5 @@ public class CreateProposicaoRequest {
     private String texto;
     private String fonte;
     private int usuarioId;
-    private int[] tagIds;
+//    private int[] tagIds;
 }

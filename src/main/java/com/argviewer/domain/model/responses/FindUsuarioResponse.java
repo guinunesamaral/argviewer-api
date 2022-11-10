@@ -19,6 +19,4 @@ public class FindUsuarioResponse {
     private String foto;
     private boolean isActive;
     private boolean isAnonimo;
-    private boolean isModerador;
-    private FindEloResponse elo;
 }

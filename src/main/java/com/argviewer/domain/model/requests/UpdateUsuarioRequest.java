@@ -15,6 +15,4 @@ public class UpdateUsuarioRequest {
     private String senha;
     private String foto;
     private boolean isAnonimo;
-    private boolean isModerador;
-    private int eloId;
 }
