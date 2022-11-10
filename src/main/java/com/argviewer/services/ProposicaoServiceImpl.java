@@ -41,9 +41,15 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
         if (usuarioId != null && tagId != null)
             proposicoes = proposicaoRepository.findAll(
-                    where(belongsTo(usuarioId)).and(containsTag(tagId)));
+                    where(belongsTo(usuarioId)).and(containsTag(tagId)))
+                    .stream()
+                    .filter(Proposicao::isProposicaoInicial)
+                    .collect(Collectors.toList());
         else if (usuarioId != null)
-            proposicoes = proposicaoRepository.findAll(where(belongsTo(usuarioId)));
+            proposicoes = proposicaoRepository.findAll(where(belongsTo(usuarioId)))
+                    .stream()
+                    .filter(Proposicao::isProposicaoInicial)
+                    .collect(Collectors.toList());
         else if (tagId != null)
             proposicoes = proposicaoRepository.findAll(containsTag(tagId));
         else
@@ -51,7 +57,6 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
         return proposicaoMapper.proposicoesToDtoList(proposicoes
                 .stream()
-                .filter(Proposicao::isProposicaoInicial)
                 .sorted((p1, p2) -> Integer.compare(p2.getRespostas().size(), p1.getRespostas().size()))
                 .collect(Collectors.toList()));
     }

@@ -34,12 +34,6 @@ public class Proposicao {
     private int qtdDownvotes;
 
     @Column(nullable = false)
-    private int relevancia;
-
-    @Column(nullable = false)
-    private int veracidade;
-
-    @Column(nullable = false)
     private boolean isProposicaoInicial;
 
     private Boolean isRespostaNegativa;

@@ -16,8 +16,6 @@ public class ProposicaoDTO {
     private LocalDateTime dataAlteracao;
     private int qtdUpvotes;
     private int qtdDownvotes;
-    private int relevancia;
-    private int veracidade;
     private boolean isProposicaoInicial;
     private Boolean isRespostaNegativa;
     private UsuarioDTO usuario;
