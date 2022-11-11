@@ -121,6 +121,13 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
     @Override
     public void deleteById(int proposicaoId) {
+        Proposicao proposicao = proposicaoRepository
+                .findById(proposicaoId)
+                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+
+        proposicao
+                .getRespostas()
+                .forEach(p -> proposicaoRepository.deleteById(p.getId()));
         proposicaoRepository.deleteById(proposicaoId);
     }
 }
