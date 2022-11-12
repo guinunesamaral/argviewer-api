@@ -57,6 +57,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         return (usuario, cq, cb) -> cb.like(usuario.get("nickname"), "%" + nickname + "%");
     }
 
+    static Specification<Usuario> nicknameEquals(String nickname) {
+        return (usuario, cq, cb) -> cb.equal(usuario.get("nickname"), nickname);
+    }
+
     @Override
     public List<UsuarioDTO> find(String value) {
         List<Usuario> usuarios;
@@ -66,6 +70,14 @@ public class UsuarioServiceImpl implements UsuarioService {
                     Specification.where(usuarioIsActive()).and(nomeContains(value).or(nicknameContains(value))));
         else
             usuarios = usuarioRepository.findAll(Specification.where(usuarioIsActive()));
+
+        return usuarioMapper.usuariosToDtoList(usuarios);
+    }
+
+    @Override
+    public List<UsuarioDTO> findByNickname(String nickname) {
+        List<Usuario> usuarios = usuarioRepository.findAll(
+                Specification.where(usuarioIsActive()).and(nicknameContains(nickname)));
 
         return usuarioMapper.usuariosToDtoList(usuarios);
     }

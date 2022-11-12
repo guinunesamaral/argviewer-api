@@ -11,19 +11,13 @@ public interface UsuarioService {
 
     List<UsuarioDTO> find(String value);
 
+    List<UsuarioDTO> findByNickname(String nickname);
+
     Optional<UsuarioDTO> findById(int usuarioId);
-
-//    List<UsuarioDTO> findSeguidores(int usuarioId);
-
-//    List<UsuarioDTO> findSeguindo(int usuarioId);
 
     int create(UsuarioDTO dto);
 
     void update(UsuarioDTO dto) throws IllegalOperationException;
 
     void inactivate(int usuarioId) throws IllegalOperationException;
-
-//    boolean saveSeguidores(int usuarioId, int seguidorId) throws IllegalOperationException;
-
-//    boolean saveSeguindo(int usuarioId, int seguindoId) throws IllegalOperationException;
 }

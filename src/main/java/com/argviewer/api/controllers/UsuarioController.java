@@ -45,6 +45,12 @@ public class UsuarioController {
         return responseMapper.dtosToFindUsuarioResponseList(dtoList);
     }
 
+    @GetMapping("/nickname/{nickname}")
+    public List<FindUsuarioResponse> findByNickname(@PathVariable String nickname) {
+        List<UsuarioDTO> dtoList = usuarioService.find(nickname);
+        return responseMapper.dtosToFindUsuarioResponseList(dtoList);
+    }
+
     @GetMapping("/{usuarioId}")
     public FindUsuarioResponse findById(@PathVariable int usuarioId) {
         UsuarioDTO dto = usuarioService
