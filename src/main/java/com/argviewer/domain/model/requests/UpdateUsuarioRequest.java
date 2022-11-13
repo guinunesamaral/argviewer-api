@@ -10,7 +10,6 @@ import lombok.Setter;
 public class UpdateUsuarioRequest {
     private int id;
     private String nome;
-    private String nickname;
     private String email;
     private String senha;
     private String foto;

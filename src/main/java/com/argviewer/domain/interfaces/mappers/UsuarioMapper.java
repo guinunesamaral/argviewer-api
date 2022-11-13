@@ -23,6 +23,7 @@ public interface UsuarioMapper {
 
     @InheritConfiguration
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "nickname", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "dataCriacao", ignore = true)
     @Mapping(target = "proposicoesCriadas", ignore = true)

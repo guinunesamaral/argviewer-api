@@ -77,7 +77,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public List<UsuarioDTO> findByNickname(String nickname) {
         List<Usuario> usuarios = usuarioRepository.findAll(
-                Specification.where(usuarioIsActive()).and(nicknameContains(nickname)));
+                Specification.where(usuarioIsActive()).and(nicknameEquals(nickname)));
 
         return usuarioMapper.usuariosToDtoList(usuarios);
     }
