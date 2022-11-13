@@ -5,10 +5,7 @@ import com.argviewer.domain.interfaces.repositories.UsuarioRepository;
 import com.argviewer.domain.interfaces.services.UsuarioService;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
 import com.argviewer.domain.model.entities.Usuario;
-import com.argviewer.domain.model.exceptions.AccessDeniedException;
-import com.argviewer.domain.model.exceptions.DataViolationException;
-import com.argviewer.domain.model.exceptions.EntityNotFoundException;
-import com.argviewer.domain.model.exceptions.IllegalOperationException;
+import com.argviewer.domain.model.exceptions.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,10 +54,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         return (usuario, cq, cb) -> cb.like(usuario.get("nickname"), "%" + nickname + "%");
     }
 
-    static Specification<Usuario> nicknameEquals(String nickname) {
-        return (usuario, cq, cb) -> cb.equal(usuario.get("nickname"), nickname);
-    }
-
     @Override
     public List<UsuarioDTO> find(String value) {
         List<Usuario> usuarios;
@@ -75,11 +68,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<UsuarioDTO> findByNickname(String nickname) {
-        List<Usuario> usuarios = usuarioRepository.findAll(
-                Specification.where(usuarioIsActive()).and(nicknameEquals(nickname)));
+    public UsuarioDTO findByEmail(String email) {
+        Optional<Usuario> usuario = usuarioRepository
+                .findByEmail(email);
 
-        return usuarioMapper.usuariosToDtoList(usuarios);
+        return usuario.map(usuarioMapper::usuarioToDto).orElse(null);
+    }
+
+    @Override
+    public UsuarioDTO findByNickname(String nickname) {
+        Optional<Usuario> usuario = usuarioRepository
+                .findByNickname(nickname);
+
+        return usuario.map(usuarioMapper::usuarioToDto).orElse(null);
     }
 
     @Override
@@ -89,7 +90,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public int create(UsuarioDTO dto) {
+    public int create(UsuarioDTO dto) throws InvalidParameterException {
+        if (findByNickname(dto.getNickname()) != null)
+            throw new InvalidParameterException("Já existe um Usuário com esse nickname.");
+
+        if (findByEmail(dto.getEmail()) != null)
+            throw new InvalidParameterException("Já existe um Usuário com esse email.");
+
         Usuario usuario = usuarioMapper.dtoToUsuario(dto);
         try {
             usuarioRepository.save(usuario);
@@ -100,7 +107,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void update(UsuarioDTO dto) throws IllegalOperationException {
+    public void update(UsuarioDTO dto) throws IllegalOperationException, InvalidParameterException {
+        UsuarioDTO u = findByNickname(dto.getNickname());
+        if (u != null && u.getId() != dto.getId())
+            throw new InvalidParameterException("Já existe um Usuário com esse nickname.");
+
+        u = findByEmail(dto.getEmail());
+        if (u != null && u.getId() != dto.getId())
+            throw new InvalidParameterException("Já existe um Usuário com esse email.");
+
         Usuario usuario = usuarioRepository
                 .findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado."));

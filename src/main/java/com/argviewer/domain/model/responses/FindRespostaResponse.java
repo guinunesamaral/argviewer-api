@@ -17,7 +17,7 @@ public class FindRespostaResponse {
     private LocalDateTime dataAlteracao;
     private int qtdUpvotes;
     private int qtdDownvotes;
-    private Boolean isRespostaNegativa;
+    private Boolean isRespostaContraria;
     private FindRespostaUsuarioResponse usuario;
 
     @Getter

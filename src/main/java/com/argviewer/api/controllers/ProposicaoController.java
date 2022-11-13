@@ -5,6 +5,7 @@ import com.argviewer.domain.interfaces.mappers.ResponseMapper;
 import com.argviewer.domain.interfaces.services.ProposicaoService;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
+import com.argviewer.domain.model.exceptions.InvalidParameterException;
 import com.argviewer.domain.model.requests.AddRespostaRequest;
 import com.argviewer.domain.model.requests.CreateProposicaoRequest;
 import com.argviewer.domain.model.requests.UpdateProposicaoRequest;
@@ -59,7 +60,7 @@ public class ProposicaoController {
     }
 
     @PostMapping
-    public ResponseEntity<Response> create(@RequestBody CreateProposicaoRequest request) {
+    public ResponseEntity<Response> create(@RequestBody CreateProposicaoRequest request) throws InvalidParameterException {
         int id = proposicaoService.create(requestMapper.createProposicaoRequestToDto(request));
         URI location = URI.create("/proposicoes/" + id);
         Response response = new Response(HttpStatus.CREATED.value(), "Proposição criada com sucesso.", System.currentTimeMillis());
@@ -67,7 +68,7 @@ public class ProposicaoController {
     }
 
     @PutMapping
-    public ResponseEntity<Response> update(@RequestBody UpdateProposicaoRequest request) {
+    public ResponseEntity<Response> update(@RequestBody UpdateProposicaoRequest request) throws InvalidParameterException {
         proposicaoService.update(requestMapper.updateProposicaoRequestToDto(request));
         Response response = new Response(200, "Proposição atualizada com sucesso.", System.currentTimeMillis());
         return ResponseEntity.ok(response);

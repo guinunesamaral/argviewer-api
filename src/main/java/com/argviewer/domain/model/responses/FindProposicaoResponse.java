@@ -19,6 +19,6 @@ public class FindProposicaoResponse {
     private int qtdUpvotes;
     private int qtdDownvotes;
     private boolean isProposicaoInicial;
-    private Boolean isRespostaNegativa;
+    private Boolean isRespostaContraria;
     private List<FindRespostaResponse> respostas;
 }

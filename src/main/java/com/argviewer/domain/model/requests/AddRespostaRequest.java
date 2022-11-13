@@ -10,6 +10,6 @@ import lombok.Setter;
 public class AddRespostaRequest {
     private String texto;
     private String fonte;
-    private Boolean isRespostaNegativa;
+    private Boolean isRespostaContraria;
     private int usuarioId;
 }

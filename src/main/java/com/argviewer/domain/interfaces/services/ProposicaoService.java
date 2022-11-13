@@ -2,6 +2,7 @@ package com.argviewer.domain.interfaces.services;
 
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
+import com.argviewer.domain.model.exceptions.InvalidParameterException;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +17,9 @@ public interface ProposicaoService {
 
     List<ProposicaoDTO> findRespostas(int proposicaoId);
 
-    int create(ProposicaoDTO dto);
+    int create(ProposicaoDTO dto) throws InvalidParameterException;
 
-    void update(ProposicaoDTO dto);
+    void update(ProposicaoDTO dto) throws InvalidParameterException;
 
     void addResposta(int proposicaoId, ProposicaoDTO dto) throws IllegalOperationException;
 

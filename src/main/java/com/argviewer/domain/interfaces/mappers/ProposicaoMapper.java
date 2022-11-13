@@ -24,7 +24,7 @@ public interface ProposicaoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dataCriacao", ignore = true)
     @Mapping(target = "usuario", ignore = true)
-    @Mapping(target = "isRespostaNegativa", ignore = true)
+    @Mapping(target = "isRespostaContraria", ignore = true)
     @Mapping(target = "proposicaoInicial", ignore = true)
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "respostas", ignore = true)

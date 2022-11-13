@@ -5,6 +5,7 @@ import com.argviewer.domain.interfaces.mappers.RequestMapper;
 import com.argviewer.domain.interfaces.services.UsuarioService;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
+import com.argviewer.domain.model.exceptions.InvalidParameterException;
 import com.argviewer.domain.model.requests.CreateUsuarioRequest;
 import com.argviewer.domain.model.requests.LoginRequest;
 import com.argviewer.domain.model.requests.UpdateUsuarioRequest;
@@ -60,7 +61,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Response> create(@RequestBody CreateUsuarioRequest request) {
+    public ResponseEntity<Response> create(@RequestBody CreateUsuarioRequest request) throws InvalidParameterException {
         int id = usuarioService.create(requestMapper.createUsuarioRequestToDto(request));
         URI location = URI.create("/usuarios/" + id);
         Response response = new Response(HttpStatus.CREATED.value(), "Usuário criado com sucesso.", System.currentTimeMillis());
@@ -68,7 +69,7 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<Response> update(@RequestBody UpdateUsuarioRequest request) throws IllegalOperationException {
+    public ResponseEntity<Response> update(@RequestBody UpdateUsuarioRequest request) throws IllegalOperationException, InvalidParameterException {
         usuarioService.update(requestMapper.updateUsuarioRequestToDto(request));
         Response response = new Response(200, "Usuário atualizado com sucesso", System.currentTimeMillis());
         return ResponseEntity.ok(response);

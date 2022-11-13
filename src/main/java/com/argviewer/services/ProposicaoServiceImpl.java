@@ -3,10 +3,12 @@ package com.argviewer.services;
 import com.argviewer.domain.interfaces.mappers.ProposicaoMapper;
 import com.argviewer.domain.interfaces.repositories.ProposicaoRepository;
 import com.argviewer.domain.interfaces.services.ProposicaoService;
+import com.argviewer.domain.interfaces.services.UsuarioService;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.entities.Proposicao;
 import com.argviewer.domain.model.exceptions.EntityNotFoundException;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
+import com.argviewer.domain.model.exceptions.InvalidParameterException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +24,12 @@ public class ProposicaoServiceImpl implements ProposicaoService {
 
     private final ProposicaoMapper proposicaoMapper;
 
-    public ProposicaoServiceImpl(ProposicaoRepository proposicaoRepository, ProposicaoMapper proposicaoMapper) {
+    private final UsuarioService usuarioService;
+
+    public ProposicaoServiceImpl(ProposicaoRepository proposicaoRepository, ProposicaoMapper proposicaoMapper, UsuarioService usuarioService) {
         this.proposicaoRepository = proposicaoRepository;
         this.proposicaoMapper = proposicaoMapper;
+        this.usuarioService = usuarioService;
     }
 
     static Specification<Proposicao> belongsTo(int usuarioId) {
@@ -85,6 +90,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         Proposicao proposicao = proposicaoRepository
                 .findById(proposicaoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+
         return proposicaoMapper.proposicoesToDtoList(proposicao.getRespostas()
                 .stream()
                 .sorted((p1, p2) -> p2.getDataCriacao().compareTo(p1.getDataCriacao()))
@@ -92,16 +98,36 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public int create(ProposicaoDTO dto) {
+    public int create(ProposicaoDTO dto) throws InvalidParameterException {
+        if (dto.getTexto().length() > 400)
+            throw new InvalidParameterException("O texto da Proposição deve ter no máximo 400 caracteres");
+
+        if (dto.getFonte().length() > 300)
+            throw new InvalidParameterException("A fonte da Proposição deve ter no máximo 300 caracteres");
+
+        if (usuarioService.findById(dto.getUsuario().getId()).isEmpty())
+            throw new NullPointerException("O Usuário informado não foi encontrado.");
+
         Proposicao proposicao = proposicaoMapper.dtoToProposicao(dto);
+
         return proposicaoRepository.save(proposicao).getId();
     }
 
     @Override
-    public void update(ProposicaoDTO dto) {
+    public void update(ProposicaoDTO dto) throws InvalidParameterException {
+        if (dto.getTexto().length() > 400)
+            throw new InvalidParameterException("O texto da Proposição deve ter no máximo 400 caracteres");
+
+        if (dto.getFonte().length() > 300)
+            throw new InvalidParameterException("A fonte da Proposição deve ter no máximo 300 caracteres");
+
+        if (dto.getQtdDownvotes() < 0 || dto.getQtdUpvotes() < 0)
+            throw new InvalidParameterException("QtdDownvotes e qtdUpvotes não podem ser negativos.");
+
         Proposicao proposicao = proposicaoRepository
                 .findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+
         proposicaoMapper.dtoToProposicao(dto, proposicao);
         proposicaoRepository.save(proposicao);
     }

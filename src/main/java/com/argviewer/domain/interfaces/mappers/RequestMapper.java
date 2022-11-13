@@ -33,7 +33,7 @@ public interface RequestMapper {
 
     @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
     @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
-    @Mapping(target = "isRespostaNegativa", expression = "java(request.getIsRespostaNegativa())")
+    @Mapping(target = "isRespostaContraria", expression = "java(request.getIsRespostaContraria())")
     ProposicaoDTO addRespostaRequestToDto(AddRespostaRequest request);
 
     @Mapping(target = "dataAlteracao", expression = "java(LocalDateTime.now())")
