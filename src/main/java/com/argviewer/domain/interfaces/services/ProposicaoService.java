@@ -1,6 +1,7 @@
 package com.argviewer.domain.interfaces.services;
 
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.dtos.UsuarioVoteDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import com.argviewer.domain.model.exceptions.InvalidParameterException;
 
@@ -22,6 +23,10 @@ public interface ProposicaoService {
     void update(ProposicaoDTO dto) throws InvalidParameterException;
 
     void addResposta(int proposicaoId, ProposicaoDTO dto) throws IllegalOperationException;
+
+    void addVote(UsuarioVoteDTO dto) throws InvalidParameterException;
+
+    void removeVote(UsuarioVoteDTO dto) throws InvalidParameterException;
 
     void deleteById(int proposicaoId);
 }

@@ -21,4 +21,5 @@ public class FindProposicaoResponse {
     private boolean isProposicaoInicial;
     private Boolean isRespostaContraria;
     private List<FindRespostaResponse> respostas;
+    private List<FindUsuarioVoteResponse> votes;
 }

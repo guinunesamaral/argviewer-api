@@ -27,5 +27,6 @@ public interface UsuarioMapper {
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "dataCriacao", ignore = true)
     @Mapping(target = "proposicoesCriadas", ignore = true)
+    @Mapping(target = "upAndDownVotes", ignore = true)
     void dtoToUsuario(UsuarioDTO dto, @MappingTarget Usuario usuario);
 }

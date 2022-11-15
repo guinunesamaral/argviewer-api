@@ -1,16 +1,21 @@
 package com.argviewer.services;
 
 import com.argviewer.domain.interfaces.mappers.ProposicaoMapper;
+import com.argviewer.domain.interfaces.mappers.UsuarioVoteMapper;
 import com.argviewer.domain.interfaces.repositories.ProposicaoRepository;
+import com.argviewer.domain.interfaces.repositories.UsuarioRepository;
+import com.argviewer.domain.interfaces.repositories.UsuarioVoteRepository;
 import com.argviewer.domain.interfaces.services.ProposicaoService;
-import com.argviewer.domain.interfaces.services.UsuarioService;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
+import com.argviewer.domain.model.dtos.UsuarioVoteDTO;
 import com.argviewer.domain.model.entities.Proposicao;
+import com.argviewer.domain.model.entities.Usuario;
+import com.argviewer.domain.model.entities.UsuarioVote;
 import com.argviewer.domain.model.exceptions.EntityNotFoundException;
-import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import com.argviewer.domain.model.exceptions.InvalidParameterException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,15 +26,17 @@ import static org.springframework.data.jpa.domain.Specification.where;
 public class ProposicaoServiceImpl implements ProposicaoService {
 
     private final ProposicaoRepository proposicaoRepository;
-
+    private final UsuarioRepository usuarioRepository;
+    private final UsuarioVoteRepository usuarioVoteRepository;
     private final ProposicaoMapper proposicaoMapper;
+    private final UsuarioVoteMapper usuarioVoteMapper;
 
-    private final UsuarioService usuarioService;
-
-    public ProposicaoServiceImpl(ProposicaoRepository proposicaoRepository, ProposicaoMapper proposicaoMapper, UsuarioService usuarioService) {
+    public ProposicaoServiceImpl(ProposicaoRepository proposicaoRepository, UsuarioRepository usuarioRepository, UsuarioVoteRepository usuarioVoteRepository, ProposicaoMapper proposicaoMapper, UsuarioVoteMapper usuarioVoteMapper) {
         this.proposicaoRepository = proposicaoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.usuarioVoteRepository = usuarioVoteRepository;
         this.proposicaoMapper = proposicaoMapper;
-        this.usuarioService = usuarioService;
+        this.usuarioVoteMapper = usuarioVoteMapper;
     }
 
     static Specification<Proposicao> belongsTo(int usuarioId) {
@@ -105,7 +112,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         if (dto.getFonte().length() > 300)
             throw new InvalidParameterException("A fonte da Proposição deve ter no máximo 300 caracteres");
 
-        if (usuarioService.findById(dto.getUsuario().getId()).isEmpty())
+        if (usuarioRepository.findById(dto.getUsuario().getId()).isEmpty())
             throw new NullPointerException("O Usuário informado não foi encontrado.");
 
         Proposicao proposicao = proposicaoMapper.dtoToProposicao(dto);
@@ -121,9 +128,6 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         if (dto.getFonte().length() > 300)
             throw new InvalidParameterException("A fonte da Proposição deve ter no máximo 300 caracteres");
 
-        if (dto.getQtdDownvotes() < 0 || dto.getQtdUpvotes() < 0)
-            throw new InvalidParameterException("QtdDownvotes e qtdUpvotes não podem ser negativos.");
-
         Proposicao proposicao = proposicaoRepository
                 .findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
@@ -133,7 +137,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
-    public void addResposta(int proposicaoId, ProposicaoDTO dto) throws IllegalOperationException {
+    public void addResposta(int proposicaoId, ProposicaoDTO dto) {
         Proposicao proposicao = proposicaoRepository
                 .findById(proposicaoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
@@ -146,6 +150,59 @@ public class ProposicaoServiceImpl implements ProposicaoService {
     }
 
     @Override
+    public void addVote(UsuarioVoteDTO dto) throws InvalidParameterException {
+        Usuario usuario = usuarioRepository
+                .findById(dto.getUsuario().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+
+        Proposicao proposicao = proposicaoRepository
+                .findById(dto.getProposicao().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+
+        if (usuarioVoteRepository
+                .findByUsuarioIdAndProposicaoId(usuario.getId(), proposicao.getId())
+                .isPresent())
+            throw new InvalidParameterException("Esse Usuário já votou nessa Proposicão.");
+
+        if (dto.isUpvote())
+            proposicao.setQtdUpvotes(proposicao.getQtdUpvotes() + 1);
+        else
+            proposicao.setQtdDownvotes(proposicao.getQtdDownvotes() + 1);
+
+        proposicaoRepository.save(proposicao);
+
+        UsuarioVote usuarioVote = usuarioVoteMapper.dtoToUsuarioVote(dto);
+        usuarioVoteRepository.save(usuarioVote);
+    }
+
+    @Transactional
+    @Override
+    public void removeVote(UsuarioVoteDTO dto) throws InvalidParameterException {
+        Usuario usuario = usuarioRepository
+                .findById(dto.getUsuario().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+
+        Proposicao proposicao = proposicaoRepository
+                .findById(dto.getProposicao().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
+
+        Optional<UsuarioVote> usuarioVote = usuarioVoteRepository
+                .findByUsuarioIdAndProposicaoId(usuario.getId(), proposicao.getId());
+
+        if (usuarioVote.isEmpty())
+            throw new InvalidParameterException("Esse Usuário não votou nessa Proposicão.");
+
+        if (usuarioVote.get().isUpvote())
+            proposicao.setQtdUpvotes(proposicao.getQtdUpvotes() - 1);
+        else
+            proposicao.setQtdDownvotes(proposicao.getQtdDownvotes() - 1);
+
+        proposicaoRepository.save(proposicao);
+        usuarioVoteRepository.deleteByUsuarioIdAndProposicaoId(usuario.getId(), proposicao.getId());
+    }
+
+    @Transactional
+    @Override
     public void deleteById(int proposicaoId) {
         Proposicao proposicao = proposicaoRepository
                 .findById(proposicaoId)
@@ -154,6 +211,12 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         proposicao
                 .getRespostas()
                 .forEach(p -> proposicaoRepository.deleteById(p.getId()));
+
+        proposicao
+                .getVotes()
+                .forEach(uv -> usuarioVoteRepository.deleteByUsuarioIdAndProposicaoId(
+                        uv.getId().getUsuarioId(), uv.getId().getProposicaoId()));
+
         proposicaoRepository.deleteById(proposicaoId);
     }
 }

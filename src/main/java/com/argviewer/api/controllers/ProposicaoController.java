@@ -7,6 +7,7 @@ import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import com.argviewer.domain.model.exceptions.InvalidParameterException;
 import com.argviewer.domain.model.requests.AddRespostaRequest;
+import com.argviewer.domain.model.requests.AddVoteRequest;
 import com.argviewer.domain.model.requests.CreateProposicaoRequest;
 import com.argviewer.domain.model.requests.UpdateProposicaoRequest;
 import com.argviewer.domain.model.responses.FindProposicaoResponse;
@@ -78,6 +79,20 @@ public class ProposicaoController {
     public ResponseEntity<Response> addResposta(@PathVariable int proposicaoId, @RequestBody AddRespostaRequest request) throws IllegalOperationException {
         proposicaoService.addResposta(proposicaoId, requestMapper.addRespostaRequestToDto(request));
         Response response = new Response(200, "Resposta adicionada com sucesso.", System.currentTimeMillis());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/vote")
+    public ResponseEntity<Response> addVote(@RequestBody AddVoteRequest request) throws InvalidParameterException {
+        proposicaoService.addVote(requestMapper.addVoteRequestToDto(request));
+        Response response = new Response(200, "Voto adicionado com sucesso.", System.currentTimeMillis());
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/vote")
+    public ResponseEntity<Response> removeVote(@RequestBody AddVoteRequest request) throws InvalidParameterException {
+        proposicaoService.removeVote(requestMapper.addVoteRequestToDto(request));
+        Response response = new Response(200, "Voto removido com sucesso.", System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }
 

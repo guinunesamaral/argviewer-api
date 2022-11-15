@@ -3,6 +3,7 @@ package com.argviewer.domain.interfaces.mappers;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.dtos.TagDTO;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
+import com.argviewer.domain.model.dtos.UsuarioVoteDTO;
 import com.argviewer.domain.model.requests.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -38,4 +39,8 @@ public interface RequestMapper {
 
     @Mapping(target = "dataAlteracao", expression = "java(LocalDateTime.now())")
     ProposicaoDTO updateProposicaoRequestToDto(UpdateProposicaoRequest request);
+
+    @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
+    @Mapping(target = "proposicao", expression = "java(new ProposicaoDTO(request.getProposicaoId()))")
+    UsuarioVoteDTO addVoteRequestToDto(AddVoteRequest request);
 }

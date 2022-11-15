@@ -3,6 +3,8 @@ package com.argviewer.domain.interfaces.mappers;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.dtos.TagDTO;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
+import com.argviewer.domain.model.dtos.UsuarioVoteDTO;
+import com.argviewer.domain.model.entities.UsuarioVote;
 import com.argviewer.domain.model.responses.*;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
@@ -43,12 +45,20 @@ public interface ResponseMapper {
     @IterableMapping(qualifiedByName = "DtoToFindRespostaResponse")
     List<FindRespostaResponse> dtosToFindRespostaResponseList(List<ProposicaoDTO> respostas);
 
+    @Named("DtoToFindUsuarioVoteResponse")
+    @Mapping(target = "usuarioId", expression = "java(dto.getId().getUsuarioId())")
+    FindUsuarioVoteResponse dtoToFindUsuarioVoteResponse(UsuarioVoteDTO dto);
+
+    @Named("DtoToFindUsuarioVoteResponseList")
+    @IterableMapping(qualifiedByName = "DtoToFindUsuarioVoteResponse")
+    List<FindUsuarioVoteResponse> dtoToFindUsuarioVoteResponseList(List<UsuarioVoteDTO> votes);
+
     @Named("DtoToFindProposicaoResponse")
     @Mapping(target = "respostas", qualifiedByName = "DtosToFindRespostaResponseList")
+    @Mapping(target = "votes", qualifiedByName = "DtoToFindUsuarioVoteResponseList")
     FindProposicaoResponse dtoToFindProposicaoResponse(ProposicaoDTO dto);
 
     @Named("DtosToFindProposicaoResponseList")
     @IterableMapping(qualifiedByName = "DtoToFindProposicaoResponse")
     List<FindProposicaoResponse> dtosToFindProposicaoResponseList(List<ProposicaoDTO> dtos);
-
 }

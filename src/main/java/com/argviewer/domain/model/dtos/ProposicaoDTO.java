@@ -21,6 +21,7 @@ public class ProposicaoDTO {
     private UsuarioDTO usuario;
     private List<TagDTO> tags;
     private List<ProposicaoDTO> respostas;
+    private List<UsuarioVoteDTO> votes;
 
     public ProposicaoDTO() {
     }

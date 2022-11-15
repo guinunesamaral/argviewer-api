@@ -59,6 +59,9 @@ public class Proposicao {
     @ManyToMany(mappedBy = "respostas")
     private List<Proposicao> proposicoes;
 
+    @OneToMany(mappedBy = "proposicao")
+    private List<UsuarioVote> votes;
+
     public Proposicao() {
     }
 

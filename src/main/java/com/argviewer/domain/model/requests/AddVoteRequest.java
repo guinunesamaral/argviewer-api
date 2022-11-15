@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateProposicaoRequest {
-    private int id;
-    private String texto;
-    private String fonte;
+public class AddVoteRequest {
+    private int usuarioId;
+    private int proposicaoId;
+    private boolean isUpvote;
 }
