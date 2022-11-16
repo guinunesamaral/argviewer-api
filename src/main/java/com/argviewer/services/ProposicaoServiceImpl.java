@@ -136,6 +136,7 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         proposicaoRepository.save(proposicao);
     }
 
+    @Transactional
     @Override
     public void addResposta(int proposicaoId, ProposicaoDTO dto) {
         Proposicao proposicao = proposicaoRepository
@@ -207,15 +208,6 @@ public class ProposicaoServiceImpl implements ProposicaoService {
         Proposicao proposicao = proposicaoRepository
                 .findById(proposicaoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proposição não encontrada."));
-
-        proposicao
-                .getRespostas()
-                .forEach(p -> proposicaoRepository.deleteById(p.getId()));
-
-        proposicao
-                .getVotes()
-                .forEach(uv -> usuarioVoteRepository.deleteByUsuarioIdAndProposicaoId(
-                        uv.getId().getUsuarioId(), uv.getId().getProposicaoId()));
 
         proposicaoRepository.deleteById(proposicaoId);
     }

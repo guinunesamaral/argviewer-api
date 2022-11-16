@@ -4,7 +4,7 @@ database:
   password: ${DB_PASSWORD}
 
 server:
-  port: ${PORT}
+  port: 9000
 
 springdoc:
   api-docs:

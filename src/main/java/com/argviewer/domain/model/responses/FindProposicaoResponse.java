@@ -19,7 +19,7 @@ public class FindProposicaoResponse {
     private int qtdUpvotes;
     private int qtdDownvotes;
     private boolean isProposicaoInicial;
-    private Boolean isRespostaContraria;
+    private Boolean isRespostaFavoravel;
     private List<FindRespostaResponse> respostas;
     private List<FindUsuarioVoteResponse> votes;
 }

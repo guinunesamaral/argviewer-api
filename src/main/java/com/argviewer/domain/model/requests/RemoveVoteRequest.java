@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddVoteRequest {
+public class RemoveVoteRequest {
     private int usuarioId;
     private int proposicaoId;
-    private boolean isUpvote;
 }

@@ -17,7 +17,7 @@ public class ProposicaoDTO {
     private int qtdUpvotes;
     private int qtdDownvotes;
     private boolean isProposicaoInicial;
-    private Boolean isRespostaContraria;
+    private Boolean isRespostaFavoravel;
     private UsuarioDTO usuario;
     private List<TagDTO> tags;
     private List<ProposicaoDTO> respostas;

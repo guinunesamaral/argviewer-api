@@ -36,7 +36,7 @@ public class Proposicao {
     @Column(nullable = false)
     private boolean isProposicaoInicial;
 
-    private Boolean isRespostaContraria;
+    private Boolean isRespostaFavoravel;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Proposicao_Usuario"))
@@ -57,7 +57,7 @@ public class Proposicao {
     private List<Proposicao> respostas;
 
     @ManyToMany(mappedBy = "respostas")
-    private List<Proposicao> proposicoes;
+    private List<Proposicao> proposicoesRespondidas;
 
     @OneToMany(mappedBy = "proposicao")
     private List<UsuarioVote> votes;

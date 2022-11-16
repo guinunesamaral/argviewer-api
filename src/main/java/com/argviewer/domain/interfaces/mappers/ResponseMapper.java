@@ -4,7 +4,6 @@ import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.dtos.TagDTO;
 import com.argviewer.domain.model.dtos.UsuarioDTO;
 import com.argviewer.domain.model.dtos.UsuarioVoteDTO;
-import com.argviewer.domain.model.entities.UsuarioVote;
 import com.argviewer.domain.model.responses.*;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;

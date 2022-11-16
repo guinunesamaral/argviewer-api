@@ -55,7 +55,7 @@ public class Usuario {
     private List<Proposicao> proposicoesCriadas;
 
     @OneToMany(mappedBy = "usuario")
-    private List<UsuarioVote> upAndDownVotes;
+    private List<UsuarioVote> votes;
 
     public Usuario() {
     }

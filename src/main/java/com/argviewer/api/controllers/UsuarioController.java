@@ -47,9 +47,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/nickname/{nickname}")
-    public List<FindUsuarioResponse> findByNickname(@PathVariable String nickname) {
-        List<UsuarioDTO> dtoList = usuarioService.find(nickname);
-        return responseMapper.dtosToFindUsuarioResponseList(dtoList);
+    public FindUsuarioResponse findByNickname(@PathVariable String nickname) {
+        UsuarioDTO dto = usuarioService.findByNickname(nickname);
+        return responseMapper.dtoToFindUsuarioResponse(dto);
     }
 
     @GetMapping("/{usuarioId}")

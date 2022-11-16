@@ -6,10 +6,7 @@ import com.argviewer.domain.interfaces.services.ProposicaoService;
 import com.argviewer.domain.model.dtos.ProposicaoDTO;
 import com.argviewer.domain.model.exceptions.IllegalOperationException;
 import com.argviewer.domain.model.exceptions.InvalidParameterException;
-import com.argviewer.domain.model.requests.AddRespostaRequest;
-import com.argviewer.domain.model.requests.AddVoteRequest;
-import com.argviewer.domain.model.requests.CreateProposicaoRequest;
-import com.argviewer.domain.model.requests.UpdateProposicaoRequest;
+import com.argviewer.domain.model.requests.*;
 import com.argviewer.domain.model.responses.FindProposicaoResponse;
 import com.argviewer.domain.model.responses.Response;
 import org.springframework.http.HttpStatus;
@@ -90,8 +87,8 @@ public class ProposicaoController {
     }
 
     @DeleteMapping("/vote")
-    public ResponseEntity<Response> removeVote(@RequestBody AddVoteRequest request) throws InvalidParameterException {
-        proposicaoService.removeVote(requestMapper.addVoteRequestToDto(request));
+    public ResponseEntity<Response> removeVote(@RequestBody RemoveVoteRequest request) throws InvalidParameterException {
+        proposicaoService.removeVote(requestMapper.removeVoteRequestToDto(request));
         Response response = new Response(200, "Voto removido com sucesso.", System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }

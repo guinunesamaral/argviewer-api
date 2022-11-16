@@ -34,7 +34,7 @@ public interface RequestMapper {
 
     @Mapping(target = "dataCriacao", expression = "java(LocalDateTime.now())")
     @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
-    @Mapping(target = "isRespostaContraria", expression = "java(request.getIsRespostaContraria())")
+    @Mapping(target = "isRespostaFavoravel", expression = "java(request.isRespostaFavoravel())")
     ProposicaoDTO addRespostaRequestToDto(AddRespostaRequest request);
 
     @Mapping(target = "dataAlteracao", expression = "java(LocalDateTime.now())")
@@ -43,4 +43,8 @@ public interface RequestMapper {
     @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
     @Mapping(target = "proposicao", expression = "java(new ProposicaoDTO(request.getProposicaoId()))")
     UsuarioVoteDTO addVoteRequestToDto(AddVoteRequest request);
+
+    @Mapping(target = "usuario", expression = "java(new UsuarioDTO(request.getUsuarioId()))")
+    @Mapping(target = "proposicao", expression = "java(new ProposicaoDTO(request.getProposicaoId()))")
+    UsuarioVoteDTO removeVoteRequestToDto(RemoveVoteRequest request);
 }

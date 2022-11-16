@@ -33,8 +33,6 @@ public interface ProposicaoMapper {
     @Named("DtoToProposicao")
     @Mapping(target = "usuario", qualifiedByName = "DtoToUsuario")
     @Mapping(target = "tags", qualifiedByName = "DtosToTagList")
-    @Mapping(target = "respostas", ignore = true)
-    @Mapping(target = "votes", ignore = true)
     Proposicao dtoToProposicao(ProposicaoDTO dto);
 
     @InheritConfiguration
@@ -43,10 +41,11 @@ public interface ProposicaoMapper {
     @Mapping(target = "qtdDownvotes", ignore = true)
     @Mapping(target = "dataCriacao", ignore = true)
     @Mapping(target = "usuario", ignore = true)
-    @Mapping(target = "isRespostaContraria", ignore = true)
     @Mapping(target = "proposicaoInicial", ignore = true)
+    @Mapping(target = "isRespostaFavoravel", ignore = true)
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "respostas", ignore = true)
+    @Mapping(target = "proposicoesRespondidas", ignore = true)
     @Mapping(target = "votes", ignore = true)
     void dtoToProposicao(ProposicaoDTO dto, @MappingTarget Proposicao proposicao);
 }
