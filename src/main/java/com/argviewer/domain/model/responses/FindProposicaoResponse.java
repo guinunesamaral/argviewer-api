@@ -20,6 +20,9 @@ public class FindProposicaoResponse {
     private int qtdDownvotes;
     private boolean isProposicaoInicial;
     private Boolean isRespostaFavoravel;
+    private int usuarioId;
     private List<FindRespostaResponse> respostas;
     private List<FindUsuarioVoteResponse> votes;
+
+    // Adicionar usuário
 }

@@ -53,6 +53,7 @@ public interface ResponseMapper {
     List<FindUsuarioVoteResponse> dtoToFindUsuarioVoteResponseList(List<UsuarioVoteDTO> votes);
 
     @Named("DtoToFindProposicaoResponse")
+    @Mapping(target = "usuarioId", expression = "java(dto.getUsuario().getId())")
     @Mapping(target = "respostas", qualifiedByName = "DtosToFindRespostaResponseList")
     @Mapping(target = "votes", qualifiedByName = "DtoToFindUsuarioVoteResponseList")
     FindProposicaoResponse dtoToFindProposicaoResponse(ProposicaoDTO dto);
